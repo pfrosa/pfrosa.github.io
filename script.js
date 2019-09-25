@@ -3,6 +3,7 @@ const autoCompleteList = document.querySelector('.autocomplete-list');
 const autoCompleteInput = document.querySelector('.autocomplete-input');
 const autoCompleteText = document.querySelector('.autocomplete-text');
 const selectedListEl = document.querySelector('.selected-list')
+//TODO: CHECK IF THIS IS A SET
 const selectedList = new Array();
 
 function setAutocompletList(list) {
@@ -23,6 +24,7 @@ function doSugestion(e) {
     const find = values
         .sort((a, b) => b.length - a.length)
         .filter((el) => el.length > textValue.length && el.startsWith(textValue));
+    // DO SPLIT : AND TYPE VALIDATIONS
     if (textValue.length && find.length) {
         autoCompleteText.value = find[0];
         autoCompleteList.classList.add('show');
@@ -63,7 +65,7 @@ function handleKeys(e) {
     // TAB, DOWN, UP, ENTER
     const especialKeyCodes = [9, 40, 38, 13];
     if (especialKeyCodes.indexOf(e.keyCode) !== -1) {
-        if (e.keyCode == 9)  doCompletion();
+        if (e.keyCode == 9) doCompletion();
         if (e.keyCode == 40) changeListSelected(+1);
         if (e.keyCode == 38) changeListSelected(-1);
         if (e.keyCode == 13) addToSelectedList(autoCompleteInput.value)
@@ -71,9 +73,25 @@ function handleKeys(e) {
     }
 
 }
-function addToSelectedList(value){
+function renderSelectedList() {
+    Array.from(selectedListEl.children).forEach(el => selectedListEl.removeChild(el))
+    selectedList.forEach((el,i) => {
+        const liEl = document.createElement('li');
+        const removeBtn = document.createElement('button');
+        removeBtn.innerText = 'X';
+        liEl.innerText = el;
+        liEl.appendChild(removeBtn);
+        removeBtn.addEventListener('click', removeFromSelectedList.bind(this,i))
+        selectedListEl.appendChild(liEl)
+    })
+}
+function addToSelectedList(value) {
     selectedList.push(value);
-    selectedListEl.innerText = selectedList.join(', ');
+    renderSelectedList();
+}
+function removeFromSelectedList(index) {
+    selectedList.splice(index, 1);
+    renderSelectedList();
 }
 autoCompleteInput.addEventListener('input', doSugestion)
 autoCompleteInput.addEventListener('keydown', handleKeys)
