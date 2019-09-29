@@ -26,6 +26,9 @@
 .autocomplete-input {
     z-index: 2;
 }
+.autocomplete-input:focus::placeholder{
+    color: transparent;
+}
 
 .autocomplete-text {
     color: silver;
