@@ -19,9 +19,9 @@ function getTextValue() {
 function hasFilter() {
     return getTextValue().indexOf(":") !== -1;
 }
-function hasFilterValue(){
+function hasFilterValue() {
     const textValue = getTextValue();
-    return hasFilter() && textValue.indexOf(":") !== textValue.length -1;
+    return hasFilter() && textValue.indexOf(":") !== textValue.length - 1;
 }
 function setAutocompletList(list) {
     autoCompleteList.removeChild(autoCompleteList.firstElementChild);
@@ -68,7 +68,7 @@ function doSugestion(e) {
 }
 
 function doCompletion(value = autoCompleteText.value) {
-    if(value == '') return false;
+    if (value == '') return false;
     autoCompleteInput.value = hasFilter() ? value : value + ":";
     autoCompleteText.value = '';
     autoCompleteList.classList.add('hide');
@@ -86,7 +86,7 @@ function changeListSelected(displacement) {
         if (i == newSelectedIndex) el.classList.add("selected");
         else el.classList.remove("selected");
     })
-    if (list.length) autoCompleteText.value = hasFilter()? getTextValue().split(":")[0] + ":" + list[newSelectedIndex].innerText : list[newSelectedIndex].innerText;
+    if (list.length) autoCompleteText.value = hasFilter() ? getTextValue().split(":")[0] + ":" + list[newSelectedIndex].innerText : list[newSelectedIndex].innerText;
 }
 
 function hoverSelected(e) {
@@ -143,5 +143,5 @@ autoCompleteInput.addEventListener('blur', (e) => {
     autoCompleteText.value = '';
     autoCompleteList.classList.remove('show');
     autoCompleteList.classList.add('hide');
-    
+
 }) 
