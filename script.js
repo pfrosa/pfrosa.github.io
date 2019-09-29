@@ -129,6 +129,7 @@ function addToSelectedList(value) {
     renderSelectedList();
     setAutocompletList([]);
     autoCompleteInput.value = "";
+    autoCompleteText.value = "";
 }
 
 function removeFromSelectedList(index) {
