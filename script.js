@@ -127,6 +127,7 @@ function renderSelectedList() {
 function addToSelectedList(value) {
     selectedList.push(value);
     renderSelectedList();
+    setAutocompletList([]);
     autoCompleteInput.value = "";
 }
 
