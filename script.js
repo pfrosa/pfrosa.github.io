@@ -19,6 +19,10 @@ function getTextValue() {
 function hasFilter() {
     return getTextValue().indexOf(":") !== -1;
 }
+function hasFilterValue(){
+    const textValue = getTextValue();
+    return hasFilter() && textValue.indexOf(":") !== textValue.length -1;
+}
 function setAutocompletList(list) {
     autoCompleteList.removeChild(autoCompleteList.firstElementChild);
     autoCompleteList.appendChild(document.createElement('ul'))
@@ -64,7 +68,8 @@ function doSugestion(e) {
 }
 
 function doCompletion(value = autoCompleteText.value) {
-    autoCompleteInput.value = value;
+    if(value == '') return false;
+    autoCompleteInput.value = hasFilter() ? value : value + ":";
     autoCompleteText.value = '';
     autoCompleteList.classList.add('hide');
     autoCompleteList.classList.remove('show');
@@ -100,7 +105,7 @@ function handleKeys(e) {
         if (e.keyCode == 9) doCompletion();
         if (e.keyCode == 40) changeListSelected(+1);
         if (e.keyCode == 38) changeListSelected(-1);
-        if (e.keyCode == 13) addToSelectedList(autoCompleteInput.value)
+        if (e.keyCode == 13 && hasFilterValue()) addToSelectedList(autoCompleteInput.value)
         e.preventDefault();
     }
 
@@ -122,6 +127,7 @@ function renderSelectedList() {
 function addToSelectedList(value) {
     selectedList.push(value);
     renderSelectedList();
+    autoCompleteInput.value = "";
 }
 
 function removeFromSelectedList(index) {
