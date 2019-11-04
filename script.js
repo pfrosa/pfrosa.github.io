@@ -7,7 +7,7 @@ const typesEnum = Object.freeze({
 const autoCompleteFilters = {
     nome: typesEnum.TEXT,
     idade: typesEnum.NUMBER,
-    //dataNasc: typesEnum.DATE
+    dataNasc: typesEnum.DATE
 }
 
 const autocompleteWrapper = document.querySelector('.autocomplete');
@@ -19,7 +19,7 @@ const resultList = document.querySelector('.result-list');
 const selectedList = new Array();
 window.selectedList = selectedList;
 
-function getFilterType(){
+function getFilterType() {
     const filter = (getTextValue().split(":")[0]).trim();
     return autoCompleteFilters[filter];
 }
@@ -37,7 +37,7 @@ function hasFilterValue() {
     return hasFilter() && textValue.indexOf(":") !== textValue.length - 1;
 }
 
-function setAutocompletList(list) {
+function renderAutocompletList(list) {
     autoCompleteList.removeChild(autoCompleteList.firstElementChild);
     autoCompleteList.appendChild(document.createElement('ul'))
     list.slice(0, 10).forEach(text => {
@@ -53,12 +53,13 @@ function setAutocompletList(list) {
     });
 
 }
-function renderAutocompleteList(list) {
+
+function setAutocompleteList(list) {
     const textValue = getTextValue();
     if (list.length) {
         autoCompleteText.value = hasFilter() ? textValue.split(":")[0] + ":" + list[0] : list[0];
         autoCompleteList.classList.add('show');
-        setAutocompletList(list);
+        renderAutocompletList(list);
     }
     else {
         autoCompleteText.value = '';
@@ -68,36 +69,48 @@ function renderAutocompleteList(list) {
 }
 
 let requestTimeout = false;
-
 //AUTO COMPLETE É SO PARA TEXTOS
+//SÒ APARECER LISTA QUANDO PARAR DE DIGITAR ?
 function doSugestion() {
     const textValue = getTextValue();
     const filterType = getFilterType();
-    if (requestTimeout) clearTimeout(requestTimeout);
+    if (requestTimeout) {
+        clearTimeout(requestTimeout)
+        requestTimeout = false;
+    } else {
+        setAutocompleteList([]); // WHILE TYPING BLANK LIST;
+    }
+
     if (hasFilter()) {
-        if( hasFilterValue() && filterType == typesEnum.TEXT){
-            requesTimeout = setTimeout(() => {
+        if (hasFilterValue() && filterType == typesEnum.TEXT) {
+            requestTimeout = setTimeout(() => {
                 autoCompleteInput.readOnly = true;
                 autocompleteWrapper.classList.add('loading');
                 doAjaxAutocomplete(textValue)
-                    .then((res) => hasFilter() && renderAutocompleteList(res))
+                    .then((res) => hasFilter() && setAutocompleteList(res))
                     .finally(() => {
                         autocompleteWrapper.classList.remove('loading');
                         autoCompleteInput.readOnly = false;
+                        requestTimeout = false;
                     })
                     .catch((err) => alert(err));
             }, 500)
-        } else{
-            switch (filterType){
+        } else {
+            switch (filterType) {
                 case typesEnum.NUMBER:
-                    console.log("O FILTRO È UM NUMERO TALKEY")
-                    renderAutocompleteList([">",">=","<","<="]);
+                    setAutocompleteList([">=", "<=", "=="]);
                     break;
+                case typesEnum.TEXT:
+                    break;
+                case typesEnum.DATE:
+                    setAutocompleteList(["DE", "ATE", "HOJE",  "HOJE", "SETE DIAS", "TRINTA DIAS", "ESTE-MÊS", "ESTE-ANO"])
+                    break;
+                default:
+                    setAutocompleteList(["FILTRO NÂO IMPLEMENTADO CONTACTE O ADMINISTRADOR DO SITEMA"])
             }
-            //SWITCH TYPE;
         }
     } else {
-        renderAutocompleteList(
+        setAutocompleteList(
             Object.keys(autoCompleteFilters)
                 .sort((a, b) => b.length - a.length)
                 .filter(el => el.length > textValue.length && el.startsWith(textValue)));
@@ -111,9 +124,8 @@ function doCompletion(value = autoCompleteText.value) {
     autoCompleteText.value = '';
     autoCompleteList.classList.add('hide');
     autoCompleteList.classList.remove('show');
-    setAutocompletList([]);
-    if(!hasFilterValue())doSugestion();
-    clearTimeout(requestTimeout);
+    renderAutocompletList([]);
+    if (!hasFilterValue()) doSugestion();
 }
 
 function changeListSelected(displacement) {
@@ -144,14 +156,15 @@ function renderResultList(results) {
         const table = document.createElement("table");
         table.innerHTML = `
             <tr>
+                <th> # </th>
                 <th>Nome</th>
                 <th>Idade</th>
                 <th>Data de Nascimento</th>
             </tr>
         `
-        const tr = ({ nome, idade, dataNasc }) => {
+        const tr = ({ nome, idade, dataNasc }, index) => {
             const tr = document.createElement('tr');
-            [nome, idade, dataNasc].forEach(dado => {
+            [index + 1, nome, idade, dataNasc].forEach(dado => {
                 const td = document.createElement('td')
                 td.innerText = dado;
                 tr.appendChild(td);
@@ -197,7 +210,7 @@ function renderSelectedList() {
 function addToSelectedList(value) {
     selectedList.push(value);
     renderSelectedList();
-    setAutocompletList([]);
+    renderAutocompletList([]);
     autoCompleteInput.value = "";
     autoCompleteText.value = "";
 }
