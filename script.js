@@ -6,6 +6,7 @@ const typesEnum = Object.freeze({
 
 const autoCompleteFilters = {
     nome: typesEnum.TEXT,
+    cod: typesEnum.NUMBER,
     idade: typesEnum.NUMBER,
     dataNasc: typesEnum.DATE
 }
@@ -157,14 +158,15 @@ function renderResultList(results) {
         table.innerHTML = `
             <tr>
                 <th> # </th>
+                <th>COD</th>
                 <th>Nome</th>
                 <th>Idade</th>
                 <th>Data de Nascimento</th>
             </tr>
         `
-        const tr = ({ nome, idade, dataNasc }, index) => {
+        const tr = ({ cod, nome, idade, dataNasc}, index) => {
             const tr = document.createElement('tr');
-            [index + 1, nome, idade, dataNasc].forEach(dado => {
+            [index + 1, cod, nome, idade, dataNasc].forEach(dado => {
                 const td = document.createElement('td')
                 td.innerText = dado;
                 tr.appendChild(td);
@@ -234,17 +236,19 @@ function parseSelectedList() {
 }
 
 function doAjaxFilter(filters) {
-    const apiUrl = new URL("http://localhost:1234/filter.php");
-    apiUrl.searchParams.append("JSON", JSON.stringify(filters));
+    const apiUrl = new URL("http://localhost:1234");
+    apiUrl.searchParams.append("json", JSON.stringify(filters));
+    apiUrl.searchParams.append("action", "filter");
     return fetch(apiUrl)
         .then(res => res.json())
 }
-
+//autoComplete should kept actual filters in mind
 function doAjaxAutocomplete(autocompleteValue) {
     let [filter, ...query] = autocompleteValue.split(/:/);
-    const apiUrl = new URL("http://localhost:1234/autocomplete.php");
+    const apiUrl = new URL("http://localhost:1234");
+    apiUrl.searchParams.append("action", "autocomplete");
     query = query.join('').toLowerCase();
-    apiUrl.searchParams.append("JSON", JSON.stringify({ filter, query }));
+    apiUrl.searchParams.append("json", JSON.stringify({ filter, query, currentFilters: parseSelectedList()}));
     return fetch(apiUrl)
         .then(res => res.json())
 }

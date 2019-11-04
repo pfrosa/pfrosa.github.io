@@ -356,8 +356,8 @@ $testValues = [
     [ "nome" => "Sue" ],
 ];
 date_default_timezone_set("America/Sao_Paulo");
-
-$testValues = array_map( (function($el){
+$index = 0;
+$testValues = array_map( (function($el) use (&$index){
     $today = new DateTime();
     $age = rand(1,75);
     $yearOfBirth =  (int) $today->format("Y") - $age;
@@ -367,6 +367,7 @@ $testValues = array_map( (function($el){
     if($dataNasc->diff($today)->y < $age) $dataNasc =  new DateTime(($yearOfBirth - 1)."-${monthOfBirth}-${dayOfBirth}");
     $el["idade"] = $age;
     $el["dataNasc"] =  $dataNasc->format("Y-m-d");
+    $el["cod"] = $index++;
     return $el;
 }),$testValues);
 
