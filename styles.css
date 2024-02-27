@@ -1,55 +1,16 @@
 * {
     box-sizing: border-box;
 }
-
 body{
-    background-color: darkorchid;
-    font-family: monospace;
-    color: white;
-    font-size: calc(1vw + 12px);
-}
-
-h1{
-    font-size: 2em;
-}
-
-p, h1 {
-    margin: 0;
-}
-
-footer{
-    height: calc( 1vw + 12px);
-    text-align: center;
-}
-
-main {
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    /* display: flex; */
     flex-direction: column;
-    height: calc(100vh - 40px);
-}
-.centerText{
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    flex-wrap: nowrap;
+    align-content: center;
 }
 
-.centerText::before{
-    content:"{";
-    margin-right: 0.5em;
+#csvInput{
+    display: block;
 }
 
-.centerText::after { 
-    content: "}";
-    margin-left: 0.5em;
+#canvas {
+    border: 1px solid black;
 }
-
-.centerText::after,
-.centerText::before{
-    font-size: 3em;
-    font-weight: normal;
-}
-
-/*Fancy spinner*/
