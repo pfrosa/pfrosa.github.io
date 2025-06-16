@@ -1,0 +1,13 @@
+#title {
+
+}
+
+#list-container {
+    display: flex;
+    flex-direction: column;
+    align-content: baseline;
+}
+
+#list-container div {
+    display: flex;
+}

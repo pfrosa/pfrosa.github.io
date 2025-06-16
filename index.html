@@ -1,21 +1,58 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Boids Pablo e Fernanda</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="style.css">
+    <title>Lista de Presentes - Pablo & Mayra</title>
 </head>
+
 <body>
-    <div class="gri">
-        <canvas id="canvas" width="1200" height="600"></canvas>
-        <div class="debug">
-            <label for="">VELOCITY X: <span id="x"></span></label>
-            <label for="">VELOCITY Y: <span id="y"></span></label>
-            <label for="">ANGLE: <span id="d"></span></label>
-        </div>
-    </div>
-    
+    <script>
+        const API = `https://script.google.com/macros/s/AKfycbyw-JIG1_ydctw8e5MonAyUYBib7BusdtafMzKQXs19kmEAEXXGCfeehfbzfUeAmf4NAA/exec`
+        const updateValue = (event) => {
+            const range = event.currentTarget.dataset.cellAddress;
+            const value = [event.currentTarget.checked.toString().toUpperCase()];
+
+            fetch(API, { method: 'POST',redirect: "follow", body: JSON.stringify({range, value})})
+            .catch(error => {
+                console.error("Erro:", error);
+            });
+        }
+
+        const buildLine = (lineData) => {
+            const [description, checkValue, rowNumber] = lineData;
+            const listContainer = document.getElementById('list-container');
+            const row = document.createElement('div');
+            const descriptionBox = document.createElement('div');
+            const valueCheckbox = document.createElement('input')
+
+            descriptionBox.innerText = description;
+            valueCheckbox.type = 'checkbox';
+            valueCheckbox.disabled = JSON.parse(checkValue.toString().toLowerCase());
+            valueCheckbox.checked = JSON.parse(checkValue.toString().toLowerCase());
+            valueCheckbox.dataset.cellAddress = `C${rowNumber + 5}`;
+            valueCheckbox.addEventListener('change', updateValue)
+            row.appendChild(descriptionBox);
+            row.appendChild(valueCheckbox);
+            listContainer.appendChild(row);
+        }
+
+        fetch(API, { redirect: "follow"})
+            .then(response => response.json())
+            .then(result => {
+                result.values.map(buildLine);
+            })
+            .catch(error => {
+                console.error("Erro:", error);
+            });
+    </script>
+
 </body>
-<script src="script.js"></script>
+<div id="title">
+    Lista de presentes
+</div>
+<div id="list-container"></div>
+
 </html>
