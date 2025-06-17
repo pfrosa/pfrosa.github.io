@@ -6,6 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
     <title>Lista de Presentes - Pablo & Mayra</title>
+    <!-- <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=WindSong:wght@400;500&display=swap" rel="stylesheet"> -->
 </head>
 
 <body>
@@ -30,6 +33,7 @@
 
             descriptionBox.innerText = description;
             valueCheckbox.type = 'checkbox';
+            valueCheckbox.name = `C${rowNumber + 5}`;
             valueCheckbox.disabled = JSON.parse(checkValue.toString().toLowerCase());
             valueCheckbox.checked = JSON.parse(checkValue.toString().toLowerCase());
             valueCheckbox.dataset.cellAddress = `C${rowNumber + 5}`;
@@ -42,7 +46,7 @@
         fetch(API, { redirect: "follow"})
             .then(response => response.json())
             .then(result => {
-                document.body.removeChild(document.getElementById('loading-gif'));
+                document.getElementById('paper').removeChild(document.getElementById('loading-gif'));
                 result.values.map(buildLine);
             })
             .catch(error => {
@@ -51,10 +55,15 @@
     </script>
 
 </body>
-<div id="title">
-    Lista de presentes
+<div id="paper">
+    <div id="title">
+        Lista de presentes
+    </div>
+    <div id="colors">
+    </div>
+    <div id="separator"></div>
+    <img id="loading-gif" src="./loading.svg" alt="" srcset="">
+    <div id="list-container"></div>
 </div>
-<img id="loading-gif" src="https://www.icegif.com/wp-content/uploads/2023/07/icegif-1258.gif" alt="" srcset="">
-<div id="list-container"></div>
 
 </html>

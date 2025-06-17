@@ -1,13 +1,254 @@
-#title {
+/* http://meyerweb.com/eric/tools/css/reset/ 
+   v2.0 | 20110126
+   License: none (public domain)
+*/
+@import url("https://fonts.googleapis.com/css2?family=Caveat&display=swap");
 
+html,
+body,
+div,
+span,
+applet,
+object,
+iframe,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+blockquote,
+pre,
+a,
+abbr,
+acronym,
+address,
+big,
+cite,
+code,
+del,
+dfn,
+em,
+img,
+ins,
+kbd,
+q,
+s,
+samp,
+small,
+strike,
+strong,
+sub,
+sup,
+tt,
+var,
+b,
+u,
+i,
+center,
+dl,
+dt,
+dd,
+ol,
+ul,
+li,
+fieldset,
+form,
+label,
+legend,
+input,
+table,
+caption,
+tbody,
+tfoot,
+thead,
+tr,
+th,
+td,
+article,
+aside,
+canvas,
+details,
+embed,
+figure,
+figcaption,
+footer,
+header,
+hgroup,
+menu,
+nav,
+output,
+ruby,
+section,
+summary,
+time,
+mark,
+audio,
+video {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font-size: 100%;
+    font: inherit;
+    vertical-align: baseline;
+}
+
+/* HTML5 display-role reset for older browsers */
+article,
+aside,
+details,
+figcaption,
+figure,
+footer,
+header,
+hgroup,
+menu,
+nav,
+section {
+    display: block;
+}
+
+body {
+    line-height: 1;
+}
+
+ol,
+ul {
+    list-style: none;
+}
+
+blockquote,
+q {
+    quotes: none;
+}
+
+blockquote:before,
+blockquote:after,
+q:before,
+q:after {
+    content: '';
+    content: none;
+}
+
+table {
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+
+:root {
+    --global-margin: 1.75rem;
+    --title-color: #353d04;
+}
+
+body {
+    max-width: calc(100vw - var(--global-margin));
+    width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+    font-family: "Caveat", serif;
+    background-color: #fff6ea;
+}
+
+#paper {
+    display: flex;
+    flex-direction: column;
+    background: repeating-linear-gradient(transparent 0 calc(2rem - 1px), #eecfd7 0 2rem);
+    background-color: #FFF;
+    min-height: 100vh;
+    box-shadow: 0 0 0 6px rgba(255 255 255 / 0.1) inset,
+        2px 4px 10px 0 rgba(0 0 0 / 0.025);
+    border-radius: 10px;
+    margin: 2rem 0;
+}
+
+#title {
+    padding: var(--global-margin);
+    text-align: center;
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: var(--title-color);
+}
+
+img {
+    align-self: center;
 }
 
 #list-container {
     display: flex;
     flex-direction: column;
     align-content: baseline;
+    padding: 1rem 2rem;
 }
+
+#colors {
+    display: block;
+    background-image: url(./horizontal.svg), url(vertical.svg);
+    background-repeat: repeat-x, repeat-y;
+    background-position: 0 0,0 0;
+    height: 180px;
+    width: 90%;
+    margin-bottom: 2rem;
+    background-blend-mode: darken;
+    align-self: center;
+}
+#separator {
+    display: block;
+    background-image: url(./separator.svg);
+    background-repeat: repeat-x;
+    background-clip: padding-box;
+    background-position: 0 50%;
+    background-size: 200px;
+    height: 2rem;
+    width: 90%;
+    max-width: calc( 200px * 3);
+    align-self: center;
+}
+
 
 #list-container div {
     display: flex;
+    justify-content: space-between;
+    gap: 0.5rem;
+    align-items: center;
+    font-size: 1.5rem;
+        line-height: 2rem;
+}
+
+input {
+    visibility: hidden;
+    width: 2rem;
+    height: 2rem;
+    flex: 0;
+}
+
+input:checked::after {
+    background-image: url('./checked.svg');
+}
+
+input:not(:checked)::after {
+    background-image: url('./not-checked.svg');
+}
+
+input:disabled:after {
+    opacity: 0.5;
+}
+
+input::after {
+    visibility: visible;
+    content: ' ';
+    display: block;
+    width: 2rem;
+    height: 2rem;
+    cursor: pointer;
+    background-repeat: no-repeat;
+}
+
+div:nth-child(1n) input::after {
+    transform: rotate(-5deg);
+}
+
+div:nth-child(2n) input::after {
+    transform: rotate(5deg);
 }
