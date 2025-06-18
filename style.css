@@ -140,7 +140,7 @@ table {
     :root {
         --global-margin: 1.75rem;
         --title-color: #353d04 !important;
-        color-scheme: only light;
+        color-scheme: light only;
     }
 
     body {
