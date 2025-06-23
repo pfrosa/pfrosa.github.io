@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=\, initial-scale=1.0">
+    <title>Collapsi</title>
+    <style>
+        :root {
+            --grid-gap: 5px;
+            --margin: 50px;
+        }
+
+        #cards {
+            place-self: center;
+            display: grid;
+            grid-template-columns: repeat(4, calc(25% - var(--grid-gap, 5px)));
+            grid-template-rows: repeat(4, calc(25% - var(--grid-gap, 5px)));
+            height: calc(100vh - calc(var(--margin, 25px)*2));
+            justify-items: stretch;
+            width: 800px;
+            gap: var(--grid-gap);
+            margin: var(--margin, 25px) auto;
+        }
+
+        #cards img {
+            object-fit: contain;
+            height: 100%;
+            width: 100%;
+        }
+
+        span {
+            position: relative;
+            justify-self: center;
+            cursor: pointer;
+        }
+
+        span[data-highlight-red] {
+            --bg-color: red;
+        }
+
+        span[data-highlight-black] {
+            --bg-color: black;
+        }
+
+        span[data-highlight-black][data-highlight-red] {
+            --bg-color: purple;
+        }
+
+        span[data-highlight-black]::before,
+        span[data-highlight-red]::before,
+        span[data-highlight-black][data-highlight-red]::before {
+            border-radius: 13px;
+            content: " ";
+            display: block;
+            z-index: 2;
+            height: 100%;
+            width: 100%;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            background-repeat: no-repeat;
+            background-position: center;
+            background-color: var(--bg-color);
+            background-clip: content-box;
+            opacity: 0.5;
+        }
+
+        [data-player="red"]::after,
+        [data-pawn="red"]::after {
+            background-image: url("assets/Gem\ Type3\ Red.png");
+        }
+
+        [data-player="black"]::after,
+        [data-pawn="black"]::after {
+            background-image: url("assets/Gem\ Type3\ Black.png");
+        }
+
+        [data-player]::after,
+        [data-pawn]::after {
+            content: " ";
+            display: block;
+            z-index: 1;
+            height: 100%;
+            width: 100%;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            background-repeat: no-repeat;
+            background-position: center;
+            filter: drop-shadow(25px 15px 6px #00000060);
+        }
+
+
+
+        #ui-buttons,
+        #turn-player {
+            position: fixed;
+            top: var(--margin);
+            left: var(--margin);
+            width: 200px;
+            height: 200px;
+            font-family: monospace;
+            font-weight: bold;
+            font-size: 1rem;
+        }
+
+        #ui-buttons {
+            left: auto;
+            right: var(--margin);
+        }
+
+        @media screen and (max-width:800px) {
+            #cards {
+                width: 100%;
+                height: calc(100vh - 300px);
+            }
+
+            [data-player]::after,
+            [data-pawn]::after {
+                background-size: 50px 50px;
+            }
+            #ui-buttons {
+                bottom: var(--margin);
+                top: auto;
+                width: 100px;
+                height: 100px;
+            }   
+            #turn-player {
+                bottom: var(--margin);
+                top: auto;
+                width: 150px;
+                height: 100px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div data-player="red" id="turn-player">TURN PLAYER:</div>
+    <div id="ui-buttons">
+        <button id="end-button" disabled> END TURN </button>
+        <span>AI ON<input type="checkbox" checked name="AI" id="ai-on"></span>
+        CURRENT-PATH: <div id="current-path"></div>
+    </div>
+    <div id="cards">
+
+    </div>
+</body>
+<script>
+
+    function shuffle(array) {
+        let currentIndex = array.length, randomIndex;
+        // While there remain elements to shuffle…
+        while (currentIndex) {
+            // Pick a remaining element…
+            randomIndex = Math.floor(Math.random() * currentIndex--);
+            // And swap it with the current element.
+            [array[currentIndex], array[randomIndex]] = [
+                array[randomIndex], array[currentIndex]];
+        }
+        return array;
+    }
+
+
+    const CARD_ASSETS_DICT_THEME_2 = {
+        "2C": "assets/Clubs 2.png",
+        "2D": "assets/Diamond 2.png",
+        "2H": "assets/Hearts 2.png",
+        "2S": "assets/Spades 2.png",
+        "3C": "assets/Clubs 3.png",
+        "3D": "assets/Diamond 3.png",
+        "3H": "assets/Hearts 3.png",
+        "3S": "assets/Spades 3.png",
+        "4C": "assets/Clubs 4.png",
+        "4D": "assets/Diamond 4.png",
+        "1C": "assets/Clubs 1.png",
+        "1D": "assets/Diamond 1.png",
+        "1H": "assets/Hearts 1.png",
+        "1S": "assets/Spades 1.png",
+        "BJ": "assets/Joker Black.png",
+        "RJ": "assets/Joker Red.png",
+    }
+
+    const CARD_ASSETS_DICT = CARD_ASSETS_DICT_THEME_2;
+    const shuffledCards = Object.keys(CARD_ASSETS_DICT)
+    const doShuffle = shuffle.bind(this, shuffledCards)
+    doShuffle();
+    doShuffle();
+    doShuffle();
+
+    const gameData = {
+        player: 'red',
+        turnPlayer: 'red',
+        turnPlayerCurrentCard: 'RJ',
+        otherPlayerCurrentCard: 'BJ',
+        turnPlayerCurrentPath: [shuffledCards.indexOf('RJ')],
+        turnPlayerCheckDepth: 0,
+        validPathsStrings: [],
+        cardElList: [],
+    };
+
+    const getNeighbors = (i) => {
+        const size = shuffledCards.length;
+        const rowNumber = Math.floor(i / 4);
+        const rowPos = (i + 4) % (rowNumber * 4 + 4)
+        return [
+            ((rowPos + 1) % 4) + rowNumber * 4, //right
+            ((rowPos + 3) % 4) + rowNumber * 4, //left
+            (i + (size - 4)) % size, //up
+            (i + 4) % size, //down
+        ]
+    };
+
+    const getPossibleSteps = (i, depth, currentDepth = 0, currentPath = [i]) => {
+        if (currentDepth == depth) return currentPath;
+        return getNeighbors(i).map(n => getPossibleSteps(n, depth, currentDepth + 1, [...currentPath, n]));
+    }
+
+    const getAllClickablePaths = () => {
+        if (gameData.turnPlayerCheckDepth == 0) {
+            const possiblePaths = [
+                getPossibleSteps(shuffledCards.indexOf(gameData.turnPlayerCurrentCard), 1),
+                getPossibleSteps(shuffledCards.indexOf(gameData.turnPlayerCurrentCard), 2).flat(1),
+                getPossibleSteps(shuffledCards.indexOf(gameData.turnPlayerCurrentCard), 3).flat(2),
+                getPossibleSteps(shuffledCards.indexOf(gameData.turnPlayerCurrentCard), 4).flat(3),
+            ].flat();
+            const validPaths = possiblePaths.filter(validatePath).map(pathArr => pathArr.join(`,`));
+            return validPaths;
+        } else {
+            const checkDepth = gameData.turnPlayerCheckDepth;
+            const possiblePaths = getPossibleSteps(shuffledCards.indexOf(gameData.turnPlayerCurrentCard), checkDepth).flat(checkDepth > 1 ? checkDepth - 1 : -1);
+            const validPaths = possiblePaths.filter(validatePath).map(pathArr => pathArr.join(`,`));
+            return validPaths;
+        }
+    }
+
+    const canEndPath = () => {
+        if (gameData.turnPlayerCurrentCard == 'RJ' || gameData.turnPlayerCurrentCard == 'BJ') {
+            return gameData.turnPlayerCurrentPath.length > 1;
+        } else {
+            return gameData.turnPlayerCurrentPath.length === parseInt(gameData.turnPlayerCurrentCard[0]) + 1
+        }
+    };
+
+
+    const validatePath = (path) => {
+        const noDuplicates = new Set(path).size === path.length
+        const noTurnedCards = !path.some(index => shuffledCards[index] == 'CB');
+        const noOtherPlayer = shuffledCards[path.at(-1)] !== gameData.otherPlayerCurrentCard;
+        return noDuplicates && noTurnedCards && noOtherPlayer;
+    }
+
+    const doAi = () => {
+        // get random path from valid ones = gameData.validPathsStrings;
+        const randomPath = gameData.validPathsStrings[Math.floor(Math.random() * gameData.validPathsStrings.length)];
+        walk(parseInt(randomPath.split(',').at(-1)));
+    }
+
+    const turnCardOver = (card) => {
+        shuffledCards[gameData.turnPlayerCurrentPath[0]] = 'CB';
+        gameData.cardElList[card].firstChild.src = "assets/Back Grey 2.png";
+        gameData.cardElList[card].dataset.card = 'CB';
+    }
+
+    const endTurn = () => {
+        const aiOn = document.getElementById('ai-on').checked;
+        const currentPath = gameData.turnPlayerCurrentPath;
+        turnCardOver(gameData.turnPlayerCurrentCard);
+        gameData.turnPlayer = gameData.turnPlayer == 'red' ? 'black' : 'red';
+        gameData.turnPlayerCurrentPath = [shuffledCards.indexOf(gameData.otherPlayerCurrentCard)];
+        gameData.turnPlayerCurrentCard = gameData.otherPlayerCurrentCard;
+        gameData.otherPlayerCurrentCard = shuffledCards[currentPath.at(-1)];
+        gameData.turnPlayerCheckDepth = parseInt(gameData.turnPlayerCurrentCard[0]) || 0;
+        gameData.validPathsStrings = getAllClickablePaths();
+        if (gameData.validPathsStrings.length == 0) alert(`${gameData.turnPlayer} lost, no possible moves!`)
+        document.getElementById('turn-player').dataset.player = gameData.turnPlayer;
+        document.getElementById('end-button').disabled = true;
+        updateScreenCurrentPath();
+        if (gameData.turnPlayer !== gameData.player && aiOn) {
+            doAi();
+            endTurn();
+        }
+    }
+
+    const getCardClickPath = (cardIndex) => {
+        const pathsToCard = gameData.validPathsStrings.filter(path => parseInt(path.split(',').at(-1)) === cardIndex);
+        return pathsToCard[0];
+    }
+
+    const highlight = () => {
+        getNeighbors(shuffledCards.indexOf(gameData.otherPlayerCurrentCard)).forEach(card => {
+            const el = document.querySelector(`[data-card="${shuffledCards[card]}"]`)
+            el.dataset.highlightBlack = true;
+
+        });
+
+        getNeighbors(shuffledCards.indexOf(gameData.turnPlayerCurrentCard)).forEach(card => {
+            const el = document.querySelector(`[data-card="${shuffledCards[card]}"]`)
+            el.dataset.highlightRed = true;
+
+        });
+    }
+
+    const updateScreenCurrentPath = () => {
+        document.getElementById('current-path').innerText = `( ${gameData.turnPlayerCurrentPath.map(i => shuffledCards[i])} )`;
+    }
+
+    const walk = (cardIndex) => {
+        const possiblePath = getCardClickPath(cardIndex);
+        if (possiblePath) {
+            gameData.cardElList[shuffledCards[gameData.turnPlayerCurrentPath.at(-1)]].dataset.pawn = '';
+            gameData.turnPlayerCurrentPath = possiblePath.split(',');
+            gameData.cardElList[shuffledCards[cardIndex]].dataset.pawn = gameData.turnPlayer;
+            updateScreenCurrentPath();
+        }
+    }
+
+    const initGame = (highlight = false) => {
+        //INIT DOM 
+        const cardElDict = shuffledCards.map((card, cardIndex) => {
+            const img = document.createElement('img');
+            const span = document.createElement(`span`);
+            img.src = CARD_ASSETS_DICT[card];
+            span.dataset.card = card;
+            span.appendChild(img);
+            span.addEventListener('click', () => {
+                const aiOn = document.getElementById('ai-on').checked;
+                if (aiOn && gameData.player !== gameData.turnPlayer) return false;
+                walk(cardIndex);
+                document.getElementById('end-button').disabled = !canEndPath();
+            })
+            return { [card]: span };
+        }).reduce((cardElDict, cardObj) => ({ ...cardElDict, ...cardObj }), {});
+
+        Object.values(cardElDict).forEach(el => document.getElementById(`cards`).appendChild(el));
+        gameData.cardElList = cardElDict;
+
+        if (highlight) highlight();
+        gameData.cardElList[gameData.turnPlayerCurrentCard].dataset.pawn = 'red';
+        gameData.cardElList[gameData.otherPlayerCurrentCard].dataset.pawn = 'black';
+
+        gameData.validPathsStrings = getAllClickablePaths();
+        document.getElementById('end-button').addEventListener('click', () => {
+            if (!canEndPath()) return;
+            endTurn();
+        })
+
+        updateScreenCurrentPath();
+    }
+
+
+    initGame();
+
+</script>
+
+</html>
