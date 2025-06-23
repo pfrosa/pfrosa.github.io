@@ -112,7 +112,16 @@
             right: var(--margin);
         }
 
+        button {
+            width: 100%;
+            font-size: 1.2rem;
+            height: 2rem;
+        }
+
         @media screen and (max-width:800px) {
+            :root {
+                --margin: 20px
+            }
             #cards {
                 width: 100%;
                 height: calc(100vh - 300px);
@@ -125,7 +134,7 @@
             #ui-buttons {
                 bottom: var(--margin);
                 top: auto;
-                width: 100px;
+                width: auto;
                 height: 100px;
             }   
             #turn-player {
@@ -142,8 +151,10 @@
     <div data-player="red" id="turn-player">TURN PLAYER:</div>
     <div id="ui-buttons">
         <button id="end-button" disabled> END TURN </button>
-        <span>AI ON<input type="checkbox" checked name="AI" id="ai-on"></span>
-        CURRENT-PATH: <div id="current-path"></div>
+        <div>AI ON<input type="checkbox" checked name="AI" id="ai-on"></div>
+        <div>
+            CURRENT-PATH: <div id="current-path"></div>
+        </div>
     </div>
     <div id="cards">
 
