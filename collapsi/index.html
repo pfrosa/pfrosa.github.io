@@ -4,72 +4,435 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="color-scheme" content="only light">
-    <link rel="stylesheet" href="style.css">
-    <title>Lista de Presentes - Pablo & Mayra</title>
-    <!-- <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=WindSong:wght@400;500&display=swap" rel="stylesheet"> -->
+    <title>Collapsi</title>
+    <style>
+        :root {
+            --grid-gap: 5px;
+            --margin: 50px;
+        }
+
+        #cards {
+            place-self: center;
+            display: grid;
+            grid-template-columns: repeat(4, calc(25% - var(--grid-gap, 5px)));
+            grid-template-rows: repeat(4, calc(25% - var(--grid-gap, 5px)));
+            height: calc(100vh - calc(var(--margin, 25px)*2));
+            justify-items: stretch;
+            width: 800px;
+            gap: var(--grid-gap);
+            margin: var(--margin, 25px) auto;
+        }
+
+        #cards img {
+            object-fit: contain;
+            height: 100%;
+            width: 100%;
+        }
+
+        span {
+            position: relative;
+            justify-self: center;
+            cursor: pointer;
+        }
+
+        span[data-highlight-red] {
+            --bg-color: red;
+        }
+
+        span[data-highlight-black] {
+            --bg-color: black;
+        }
+
+        span[data-highlight-black][data-highlight-red] {
+            --bg-color: purple;
+        }
+
+        span[data-highlight-black]::before,
+        span[data-highlight-red]::before,
+        span[data-highlight-black][data-highlight-red]::before {
+            border-radius: 13px;
+            content: " ";
+            display: block;
+            z-index: 2;
+            height: 100%;
+            width: 100%;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            background-repeat: no-repeat;
+            background-position: center;
+            background-color: var(--bg-color);
+            background-clip: content-box;
+            opacity: 0.5;
+        }
+
+        [data-player="red"]::after,
+        [data-pawn="red"]::after {
+            background-image: url("assets/Gem\ Type3\ Red.png");
+        }
+
+        [data-player="black"]::after,
+        [data-pawn="black"]::after {
+            background-image: url("assets/Gem\ Type3\ Black.png");
+        }
+
+        [data-player]::after,
+        [data-pawn]::after {
+            content: " ";
+            display: block;
+            z-index: 1;
+            height: 100%;
+            width: 100%;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            background-repeat: no-repeat;
+            background-position: center;
+            filter: drop-shadow(25px 15px 6px #00000060);
+        }
+
+
+
+        #ui-buttons,
+        #turn-player {
+            position: fixed;
+            top: var(--margin);
+            left: var(--margin);
+            width: 200px;
+            height: 200px;
+            font-family: monospace;
+            font-weight: bold;
+            font-size: 1rem;
+        }
+
+        #ui-buttons {
+            left: auto;
+            right: var(--margin);
+        }
+
+        button {
+            width: 100%;
+            font-size: 1.2rem;
+            height: 2rem;
+        }
+
+        @media screen and (max-width:800px) {
+            :root {
+                --margin: 20px
+            }
+
+            #cards {
+                width: 100%;
+                height: calc(100vh - 300px);
+            }
+
+            [data-player]::after,
+            [data-pawn]::after {
+                background-size: 50px 50px;
+            }
+
+            #ui-buttons {
+                bottom: calc(var(--margin) * 2);
+                top: auto;
+                width: auto;
+                height: 100px;
+            }
+
+            #turn-player {
+                bottom: calc(var(--margin) * 2);
+                top: auto;
+                width: 150px;
+                height: 100px;
+            }
+        }
+    </style>
 </head>
 
 <body>
-    <script>
-        const API = `https://script.google.com/macros/s/AKfycbyw-JIG1_ydctw8e5MonAyUYBib7BusdtafMzKQXs19kmEAEXXGCfeehfbzfUeAmf4NAA/exec`
-        const updateValue = (event) => {
-            const range = event.currentTarget.dataset.cellAddress;
-            const value = [event.currentTarget.checked.toString().toUpperCase()];
-
-            fetch(API, { method: 'POST',redirect: "follow", body: JSON.stringify({range, value})})
-            .catch(error => {
-                console.error("Erro:", error);
-            });
-        }
-
-        const buildLine = (lineData) => {
-            const [description, checkValue, rowNumber] = lineData;
-            const listContainer = document.getElementById('list-container');
-            const row = document.createElement('div');
-            const descriptionBox = document.createElement('div');
-            const valueCheckbox = document.createElement('input')
-
-            descriptionBox.innerText = description;
-            valueCheckbox.type = 'checkbox';
-            valueCheckbox.name = `C${rowNumber + 5}`;
-            valueCheckbox.disabled = JSON.parse(checkValue.toString().toLowerCase());
-            valueCheckbox.checked = JSON.parse(checkValue.toString().toLowerCase());
-            valueCheckbox.dataset.cellAddress = `C${rowNumber + 5}`;
-            valueCheckbox.addEventListener('change', updateValue)
-            row.appendChild(descriptionBox);
-            row.appendChild(valueCheckbox);
-            listContainer.appendChild(row);
-        }
-
-        fetch(API, { redirect: "follow"})
-            .then(response => response.json())
-            .then(result => {
-                document.getElementById('paper').removeChild(document.getElementById('loading-gif'));
-                result.values.map(buildLine);
-            })
-            .catch(error => {
-                console.error("Erro:", error);
-            });
-    </script>
-
-</body>
-<div id="paper">
-    <div id="title">
-        Lista de presentes
-    </div>
-    <div id="colors">
-        <div id="colors-title">Preferência de cores:</div>
-        <div id="color-array">
-            <img src="color-1.svg" />
-            <img src="color-2.svg" />
-            <img src="color-3.svg" />
+    <div data-player="red" id="turn-player">TURN PLAYER:</div>
+    <div id="ui-buttons">
+        <button id="end-button" disabled> END TURN </button>
+        <div>AI ON<input type="checkbox" checked name="AI" id="ai-on"></div>
+        <div>
+            CURRENT-PATH: <div id="current-path"></div>
+            YOU'RE PLAYER: <div id="player"></div>
         </div>
     </div>
-    <img id="loading-gif" src="./loading.svg" />
-    <div id="list-container"></div>
-</div>
+    <div id="cards">
+
+    </div>
+</body>
+<script>
+
+    function shuffle(array) {
+        let currentIndex = array.length, randomIndex;
+        // While there remain elements to shuffle…
+        while (currentIndex) {
+            // Pick a remaining element…
+            randomIndex = Math.floor(Math.random() * currentIndex--);
+            // And swap it with the current element.
+            [array[currentIndex], array[randomIndex]] = [
+                array[randomIndex], array[currentIndex]];
+        }
+        return array;
+    }
+
+
+    const MESSAGE_TYPES = {
+        CONNECT: 'connect',
+        STATE_UPDATE: 'state_update',
+    }
+
+    const CARD_ASSETS_DICT_THEME_2 = {
+        "2C": "assets/Clubs 2.png",
+        "2D": "assets/Diamond 2.png",
+        "2H": "assets/Hearts 2.png",
+        "2S": "assets/Spades 2.png",
+        "3C": "assets/Clubs 3.png",
+        "3D": "assets/Diamond 3.png",
+        "3H": "assets/Hearts 3.png",
+        "3S": "assets/Spades 3.png",
+        "4C": "assets/Clubs 4.png",
+        "4D": "assets/Diamond 4.png",
+        "1C": "assets/Clubs 1.png",
+        "1D": "assets/Diamond 1.png",
+        "1H": "assets/Hearts 1.png",
+        "1S": "assets/Spades 1.png",
+        "BJ": "assets/Joker Black.png",
+        "RJ": "assets/Joker Red.png",
+        //"CB": "assets/Back Grey 2.png",
+    }
+
+    const CARD_ASSETS_DICT = CARD_ASSETS_DICT_THEME_2;
+    const shuffledCards = Object.keys(CARD_ASSETS_DICT)
+    const doShuffle = shuffle.bind(this, shuffledCards)
+    doShuffle();
+    doShuffle();
+    doShuffle();
+
+    const gameData = {
+        player: 'red',
+        turnPlayer: 'red',
+        turnPlayerCurrentCard: 'RJ',
+        otherPlayerCurrentCard: 'BJ',
+        turnPlayerCurrentPath: [shuffledCards.indexOf('RJ')],
+        turnPlayerCheckDepth: 0,
+        validPathsStrings: [],
+        cardElList: [],
+        shuffledCards,
+        ws: null,
+    };
+
+    const getNeighbors = (i) => {
+        const size = gameData.shuffledCards.length;
+        const rowNumber = Math.floor(i / 4);
+        const rowPos = (i + 4) % (rowNumber * 4 + 4)
+        return [
+            ((rowPos + 1) % 4) + rowNumber * 4, //right
+            ((rowPos + 3) % 4) + rowNumber * 4, //left
+            (i + (size - 4)) % size, //up
+            (i + 4) % size, //down
+        ]
+    };
+
+    const getPossibleSteps = (i, depth, currentDepth = 0, currentPath = [i]) => {
+        if (currentDepth == depth) return currentPath;
+        return getNeighbors(i).map(n => getPossibleSteps(n, depth, currentDepth + 1, [...currentPath, n]));
+    }
+
+    const getAllClickablePaths = () => {
+        if (gameData.turnPlayerCheckDepth == 0) {
+            const possiblePaths = [
+                getPossibleSteps(gameData.shuffledCards.indexOf(gameData.turnPlayerCurrentCard), 1),
+                getPossibleSteps(gameData.shuffledCards.indexOf(gameData.turnPlayerCurrentCard), 2).flat(1),
+                getPossibleSteps(gameData.shuffledCards.indexOf(gameData.turnPlayerCurrentCard), 3).flat(2),
+                getPossibleSteps(gameData.shuffledCards.indexOf(gameData.turnPlayerCurrentCard), 4).flat(3),
+            ].flat();
+            const validPaths = possiblePaths.filter(validatePath).map(pathArr => pathArr.join(`,`));
+            return validPaths;
+        } else {
+            const checkDepth = gameData.turnPlayerCheckDepth;
+            const possiblePaths = getPossibleSteps(gameData.shuffledCards.indexOf(gameData.turnPlayerCurrentCard), checkDepth).flat(checkDepth > 1 ? checkDepth - 1 : -1);
+            const validPaths = possiblePaths.filter(validatePath).map(pathArr => pathArr.join(`,`));
+            return validPaths;
+        }
+    }
+
+    const canEndPath = () => {
+        if (gameData.turnPlayerCurrentCard == 'RJ' || gameData.turnPlayerCurrentCard == 'BJ') {
+            return gameData.turnPlayerCurrentPath.length > 1;
+        } else {
+            return gameData.turnPlayerCurrentPath.length === parseInt(gameData.turnPlayerCurrentCard[0]) + 1
+        }
+    };
+
+
+    const validatePath = (path) => {
+        const noDuplicates = new Set(path).size === path.length
+        const noTurnedCards = !path.some(index => gameData.shuffledCards[index] == 'CB');
+        const noOtherPlayer = gameData.shuffledCards[path.at(-1)] !== gameData.otherPlayerCurrentCard;
+        return noDuplicates && noTurnedCards && noOtherPlayer;
+    }
+
+    const doAi = () => {
+        // get random path from valid ones = gameData.validPathsStrings;
+        const randomPath = gameData.validPathsStrings[Math.floor(Math.random() * gameData.validPathsStrings.length)];
+        walk(parseInt(randomPath.split(',').at(-1)));
+    }
+
+    const turnCardOver = (card) => {
+        gameData.shuffledCards[gameData.turnPlayerCurrentPath[0]] = 'CB';
+        gameData.cardElList[card].firstChild.src = "assets/Back Grey 2.png";
+        gameData.cardElList[card].dataset.card = 'CB';
+    }
+
+    const endTurn = () => {
+        const aiOn = document.getElementById('ai-on').checked;
+        const currentPath = gameData.turnPlayerCurrentPath;
+        const cardToTurn = gameData.turnPlayerCurrentCard;
+        turnCardOver(cardToTurn);
+        gameData.turnPlayer = gameData.turnPlayer == 'red' ? 'black' : 'red';
+        gameData.turnPlayerCurrentPath = [gameData.shuffledCards.indexOf(gameData.otherPlayerCurrentCard)];
+        gameData.turnPlayerCurrentCard = gameData.otherPlayerCurrentCard;
+        gameData.otherPlayerCurrentCard = gameData.shuffledCards[currentPath.at(-1)];
+        gameData.turnPlayerCheckDepth = parseInt(gameData.turnPlayerCurrentCard[0]) || 0;
+        gameData.validPathsStrings = getAllClickablePaths();
+        updateScreen();
+        if (gameData.turnPlayer !== gameData.player && aiOn && !gameData.ws) {
+            doAi();
+            endTurn();
+        }
+        if (gameData.ws) {
+            const { player: _, cardElList:__, ws: ___, ...gameState } = gameData;
+            gameData.ws.send(JSON.stringify({
+                messageType: MESSAGE_TYPES.STATE_UPDATE,
+                gameState: {...gameState, cardToTurn},
+                room: gameData.room,
+            }))
+        }
+    }
+
+    const getCardClickPath = (cardIndex) => {
+        const pathsToCard = gameData.validPathsStrings.filter(path => parseInt(path.split(',').at(-1)) === cardIndex);
+        return pathsToCard[0];
+    }
+
+    const highlight = () => {
+        getNeighbors(gameData.shuffledCards.indexOf(gameData.otherPlayerCurrentCard)).forEach(card => {
+            const el = document.querySelector(`[data-card="${gameData.shuffledCards[card]}"]`)
+            el.dataset.highlightBlack = true;
+
+        });
+
+        getNeighbors(gameData.shuffledCards.indexOf(gameData.turnPlayerCurrentCard)).forEach(card => {
+            const el = document.querySelector(`[data-card="${gameData.shuffledCards[card]}"]`)
+            el.dataset.highlightRed = true;
+
+        });
+    }
+
+    const updateScreen = () => {
+        document.getElementById('current-path').innerText = `( ${gameData.turnPlayerCurrentPath.map(i => gameData.shuffledCards[i])} )`;
+        document.getElementById('player').innerText = gameData.player;
+        document.getElementById('turn-player').dataset.player = gameData.turnPlayer;
+        document.getElementById('end-button').disabled = gameData.turnPlayer !== player;
+        if (gameData.validPathsStrings.length == 0) alert(`${gameData.turnPlayer} lost, no possible moves!`)
+    }
+
+    const walk = (cardIndex) => {
+        const possiblePath = getCardClickPath(cardIndex);
+        if (possiblePath) {
+            gameData.cardElList[gameData.shuffledCards[gameData.turnPlayerCurrentPath.at(-1)]].dataset.pawn = '';
+            gameData.turnPlayerCurrentPath = possiblePath.split(',');
+            gameData.cardElList[gameData.shuffledCards[cardIndex]].dataset.pawn = gameData.turnPlayer;
+            updateScreen();
+        }
+    }
+
+    const handleWebSocket = (room) => {
+
+        const ws = new WebSocket("wss://game-web-socket.onrender.com");
+        // const ws = new WebSocket("ws://localhost:3000");
+        gameData.ws = ws;
+        gameData.room = room;
+        ws.onmessage = (e) => {
+            //PARSE JSON, INTERPRET MESSAGE
+            const messageJson = JSON.parse(e.data);
+            console.log(messageJson);
+            //STATE UPDATE OBJECT ASSIGN
+            if (messageJson.messageType == MESSAGE_TYPES.STATE_UPDATE) {
+                Object.assign(gameData, messageJson.gameState);
+                drawDom(messageJson.gameState.shuffledCards);
+                updateScreen();
+            }
+        };
+
+        ws.onopen = () => {
+            const connectMessage = {
+                messageType: MESSAGE_TYPES.CONNECT,
+                room,
+            }
+
+            const { player: _, cardElList:__, ws: ___, ...gameState } = gameData;
+            const stateUpdateMessamge = {
+                messageType: MESSAGE_TYPES.STATE_UPDATE,
+                room,
+                gameState,
+            }
+
+            ws.send(JSON.stringify(connectMessage));
+            ws.send(JSON.stringify(stateUpdateMessamge));
+        };
+    }
+
+    const drawDom = (cardOrder = gameData.shuffledCards) => {
+        const cardsEl = document.getElementById(`cards`);
+        cardsEl.replaceChildren();
+        const cardsEls = cardOrder.map((card, cardIndex) => {
+            const img = document.createElement('img');
+            const span = document.createElement(`span`);
+            img.src = CARD_ASSETS_DICT[card] || "assets/Back Grey 2.png";
+            span.dataset.card = card;
+            span.appendChild(img);
+            span.addEventListener('click', () => {
+                const aiOn = document.getElementById('ai-on').checked;
+                if ((aiOn || gameData.ws) && gameData.player !== gameData.turnPlayer) return false;
+                walk(cardIndex);
+                document.getElementById('end-button').disabled = !canEndPath();
+            })
+            return span
+        })
+        cardsEls.forEach(el => cardsEl.appendChild(el));
+
+        const cardElDict = cardsEls.reduce((cardElDict, cardEl) => ({ ...cardElDict, [cardEl.dataset.card]: cardEl }), {});
+        cardElDict[gameData.turnPlayerCurrentCard].dataset.pawn = gameData.turnPlayer;
+        cardElDict[gameData.otherPlayerCurrentCard].dataset.pawn = gameData.turnPlayer == 'red' ? 'black':'red';
+        gameData.cardElList = cardElDict;
+    }
+    const initGame = (highlight = false) => {
+        drawDom();
+        if (highlight) highlight();
+     
+        gameData.validPathsStrings = getAllClickablePaths();
+        document.getElementById('end-button').addEventListener('click', () => {
+            if (!canEndPath()) return;
+            endTurn();
+        })
+
+        updateScreen();
+
+        const paramsString = window.location.search;
+        const searchParams = new URLSearchParams(paramsString);
+        if (searchParams.has('r')) {
+            handleWebSocket(searchParams.get("r"));
+        };
+    }
+
+    initGame();
+
+    //ADD REMATCH & NO ENDTURN & ALSO, WAITING FOR OTHER PLAYERS AND SUCH
+</script>
 
 </html>
