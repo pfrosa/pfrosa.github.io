@@ -3,7 +3,6 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=\, initial-scale=1.0">
     <title>Collapsi</title>
     <style>
         :root {
@@ -122,6 +121,7 @@
             :root {
                 --margin: 20px
             }
+
             #cards {
                 width: 100%;
                 height: calc(100vh - 300px);
@@ -131,12 +131,14 @@
             [data-pawn]::after {
                 background-size: 50px 50px;
             }
+
             #ui-buttons {
                 bottom: var(--margin);
                 top: auto;
                 width: auto;
                 height: 100px;
-            }   
+            }
+
             #turn-player {
                 bottom: var(--margin);
                 top: auto;
@@ -154,6 +156,7 @@
         <div>AI ON<input type="checkbox" checked name="AI" id="ai-on"></div>
         <div>
             CURRENT-PATH: <div id="current-path"></div>
+            YOU'RE PLAYER: <div id="player"></div>
         </div>
     </div>
     <div id="cards">
@@ -176,6 +179,11 @@
     }
 
 
+    const MESSAGE_TYPES = {
+        CONNECT: 'connect',
+        STATE_UPDATE: 'state_update',
+    }
+
     const CARD_ASSETS_DICT_THEME_2 = {
         "2C": "assets/Clubs 2.png",
         "2D": "assets/Diamond 2.png",
@@ -193,6 +201,7 @@
         "1S": "assets/Spades 1.png",
         "BJ": "assets/Joker Black.png",
         "RJ": "assets/Joker Red.png",
+        //"CB": "assets/Back Grey 2.png",
     }
 
     const CARD_ASSETS_DICT = CARD_ASSETS_DICT_THEME_2;
@@ -211,10 +220,12 @@
         turnPlayerCheckDepth: 0,
         validPathsStrings: [],
         cardElList: [],
+        shuffledCards,
+        ws: null,
     };
 
     const getNeighbors = (i) => {
-        const size = shuffledCards.length;
+        const size = gameData.shuffledCards.length;
         const rowNumber = Math.floor(i / 4);
         const rowPos = (i + 4) % (rowNumber * 4 + 4)
         return [
@@ -233,16 +244,16 @@
     const getAllClickablePaths = () => {
         if (gameData.turnPlayerCheckDepth == 0) {
             const possiblePaths = [
-                getPossibleSteps(shuffledCards.indexOf(gameData.turnPlayerCurrentCard), 1),
-                getPossibleSteps(shuffledCards.indexOf(gameData.turnPlayerCurrentCard), 2).flat(1),
-                getPossibleSteps(shuffledCards.indexOf(gameData.turnPlayerCurrentCard), 3).flat(2),
-                getPossibleSteps(shuffledCards.indexOf(gameData.turnPlayerCurrentCard), 4).flat(3),
+                getPossibleSteps(gameData.shuffledCards.indexOf(gameData.turnPlayerCurrentCard), 1),
+                getPossibleSteps(gameData.shuffledCards.indexOf(gameData.turnPlayerCurrentCard), 2).flat(1),
+                getPossibleSteps(gameData.shuffledCards.indexOf(gameData.turnPlayerCurrentCard), 3).flat(2),
+                getPossibleSteps(gameData.shuffledCards.indexOf(gameData.turnPlayerCurrentCard), 4).flat(3),
             ].flat();
             const validPaths = possiblePaths.filter(validatePath).map(pathArr => pathArr.join(`,`));
             return validPaths;
         } else {
             const checkDepth = gameData.turnPlayerCheckDepth;
-            const possiblePaths = getPossibleSteps(shuffledCards.indexOf(gameData.turnPlayerCurrentCard), checkDepth).flat(checkDepth > 1 ? checkDepth - 1 : -1);
+            const possiblePaths = getPossibleSteps(gameData.shuffledCards.indexOf(gameData.turnPlayerCurrentCard), checkDepth).flat(checkDepth > 1 ? checkDepth - 1 : -1);
             const validPaths = possiblePaths.filter(validatePath).map(pathArr => pathArr.join(`,`));
             return validPaths;
         }
@@ -259,8 +270,8 @@
 
     const validatePath = (path) => {
         const noDuplicates = new Set(path).size === path.length
-        const noTurnedCards = !path.some(index => shuffledCards[index] == 'CB');
-        const noOtherPlayer = shuffledCards[path.at(-1)] !== gameData.otherPlayerCurrentCard;
+        const noTurnedCards = !path.some(index => gameData.shuffledCards[index] == 'CB');
+        const noOtherPlayer = gameData.shuffledCards[path.at(-1)] !== gameData.otherPlayerCurrentCard;
         return noDuplicates && noTurnedCards && noOtherPlayer;
     }
 
@@ -271,7 +282,7 @@
     }
 
     const turnCardOver = (card) => {
-        shuffledCards[gameData.turnPlayerCurrentPath[0]] = 'CB';
+        gameData.shuffledCards[gameData.turnPlayerCurrentPath[0]] = 'CB';
         gameData.cardElList[card].firstChild.src = "assets/Back Grey 2.png";
         gameData.cardElList[card].dataset.card = 'CB';
     }
@@ -279,20 +290,26 @@
     const endTurn = () => {
         const aiOn = document.getElementById('ai-on').checked;
         const currentPath = gameData.turnPlayerCurrentPath;
-        turnCardOver(gameData.turnPlayerCurrentCard);
+        const cardToTurn = gameData.turnPlayerCurrentCard;
+        turnCardOver(cardToTurn);
         gameData.turnPlayer = gameData.turnPlayer == 'red' ? 'black' : 'red';
-        gameData.turnPlayerCurrentPath = [shuffledCards.indexOf(gameData.otherPlayerCurrentCard)];
+        gameData.turnPlayerCurrentPath = [gameData.shuffledCards.indexOf(gameData.otherPlayerCurrentCard)];
         gameData.turnPlayerCurrentCard = gameData.otherPlayerCurrentCard;
-        gameData.otherPlayerCurrentCard = shuffledCards[currentPath.at(-1)];
+        gameData.otherPlayerCurrentCard = gameData.shuffledCards[currentPath.at(-1)];
         gameData.turnPlayerCheckDepth = parseInt(gameData.turnPlayerCurrentCard[0]) || 0;
         gameData.validPathsStrings = getAllClickablePaths();
-        if (gameData.validPathsStrings.length == 0) alert(`${gameData.turnPlayer} lost, no possible moves!`)
-        document.getElementById('turn-player').dataset.player = gameData.turnPlayer;
-        document.getElementById('end-button').disabled = true;
-        updateScreenCurrentPath();
-        if (gameData.turnPlayer !== gameData.player && aiOn) {
+        updateScreen();
+        if (gameData.turnPlayer !== gameData.player && aiOn && !gameData.ws) {
             doAi();
             endTurn();
+        }
+        if (gameData.ws) {
+            const { player: _, cardElList:__, ws: ___, ...gameState } = gameData;
+            gameData.ws.send(JSON.stringify({
+                messageType: MESSAGE_TYPES.STATE_UPDATE,
+                gameState: {...gameState, cardToTurn},
+                room: gameData.room,
+            }))
         }
     }
 
@@ -302,69 +319,117 @@
     }
 
     const highlight = () => {
-        getNeighbors(shuffledCards.indexOf(gameData.otherPlayerCurrentCard)).forEach(card => {
-            const el = document.querySelector(`[data-card="${shuffledCards[card]}"]`)
+        getNeighbors(gameData.shuffledCards.indexOf(gameData.otherPlayerCurrentCard)).forEach(card => {
+            const el = document.querySelector(`[data-card="${gameData.shuffledCards[card]}"]`)
             el.dataset.highlightBlack = true;
 
         });
 
-        getNeighbors(shuffledCards.indexOf(gameData.turnPlayerCurrentCard)).forEach(card => {
-            const el = document.querySelector(`[data-card="${shuffledCards[card]}"]`)
+        getNeighbors(gameData.shuffledCards.indexOf(gameData.turnPlayerCurrentCard)).forEach(card => {
+            const el = document.querySelector(`[data-card="${gameData.shuffledCards[card]}"]`)
             el.dataset.highlightRed = true;
 
         });
     }
 
-    const updateScreenCurrentPath = () => {
-        document.getElementById('current-path').innerText = `( ${gameData.turnPlayerCurrentPath.map(i => shuffledCards[i])} )`;
+    const updateScreen = () => {
+        document.getElementById('current-path').innerText = `( ${gameData.turnPlayerCurrentPath.map(i => gameData.shuffledCards[i])} )`;
+        document.getElementById('player').innerText = gameData.player;
+        document.getElementById('turn-player').dataset.player = gameData.turnPlayer;
+        document.getElementById('end-button').disabled = gameData.turnPlayer !== player;
+        if (gameData.validPathsStrings.length == 0) alert(`${gameData.turnPlayer} lost, no possible moves!`)
     }
 
     const walk = (cardIndex) => {
         const possiblePath = getCardClickPath(cardIndex);
         if (possiblePath) {
-            gameData.cardElList[shuffledCards[gameData.turnPlayerCurrentPath.at(-1)]].dataset.pawn = '';
+            gameData.cardElList[gameData.shuffledCards[gameData.turnPlayerCurrentPath.at(-1)]].dataset.pawn = '';
             gameData.turnPlayerCurrentPath = possiblePath.split(',');
-            gameData.cardElList[shuffledCards[cardIndex]].dataset.pawn = gameData.turnPlayer;
-            updateScreenCurrentPath();
+            gameData.cardElList[gameData.shuffledCards[cardIndex]].dataset.pawn = gameData.turnPlayer;
+            updateScreen();
         }
     }
 
-    const initGame = (highlight = false) => {
-        //INIT DOM 
-        const cardElDict = shuffledCards.map((card, cardIndex) => {
+    const handleWebSocket = (room) => {
+
+        const ws = new WebSocket("wss://game-web-socket.onrender.com");
+        // const ws = new WebSocket("ws://localhost:3000");
+        gameData.ws = ws;
+        gameData.room = room;
+        ws.onmessage = (e) => {
+            //PARSE JSON, INTERPRET MESSAGE
+            const messageJson = JSON.parse(e.data);
+            console.log(messageJson);
+            //STATE UPDATE OBJECT ASSIGN
+            if (messageJson.messageType == MESSAGE_TYPES.STATE_UPDATE) {
+                Object.assign(gameData, messageJson.gameState);
+                drawDom(messageJson.gameState.shuffledCards);
+                updateScreen();
+            }
+        };
+
+        ws.onopen = () => {
+            const connectMessage = {
+                messageType: MESSAGE_TYPES.CONNECT,
+                room,
+            }
+
+            const { player: _, cardElList:__, ws: ___, ...gameState } = gameData;
+            const stateUpdateMessamge = {
+                messageType: MESSAGE_TYPES.STATE_UPDATE,
+                room,
+                gameState,
+            }
+
+            ws.send(JSON.stringify(connectMessage));
+            ws.send(JSON.stringify(stateUpdateMessamge));
+        };
+    }
+
+    const drawDom = (cardOrder = gameData.shuffledCards) => {
+        const cardsEl = document.getElementById(`cards`);
+        cardsEl.replaceChildren();
+        const cardsEls = cardOrder.map((card, cardIndex) => {
             const img = document.createElement('img');
             const span = document.createElement(`span`);
-            img.src = CARD_ASSETS_DICT[card];
+            img.src = CARD_ASSETS_DICT[card] || "assets/Back Grey 2.png";
             span.dataset.card = card;
             span.appendChild(img);
             span.addEventListener('click', () => {
                 const aiOn = document.getElementById('ai-on').checked;
-                if (aiOn && gameData.player !== gameData.turnPlayer) return false;
+                if ((aiOn || gameData.ws) && gameData.player !== gameData.turnPlayer) return false;
                 walk(cardIndex);
                 document.getElementById('end-button').disabled = !canEndPath();
             })
-            return { [card]: span };
-        }).reduce((cardElDict, cardObj) => ({ ...cardElDict, ...cardObj }), {});
+            return span
+        })
+        cardsEls.forEach(el => cardsEl.appendChild(el));
 
-        Object.values(cardElDict).forEach(el => document.getElementById(`cards`).appendChild(el));
+        const cardElDict = cardsEls.reduce((cardElDict, cardEl) => ({ ...cardElDict, [cardEl.dataset.card]: cardEl }), {});
+        cardElDict[gameData.turnPlayerCurrentCard].dataset.pawn = gameData.turnPlayer;
+        cardElDict[gameData.otherPlayerCurrentCard].dataset.pawn = gameData.turnPlayer == 'red' ? 'black':'red';
         gameData.cardElList = cardElDict;
-
+    }
+    const initGame = (highlight = false) => {
+        drawDom();
         if (highlight) highlight();
-        gameData.cardElList[gameData.turnPlayerCurrentCard].dataset.pawn = 'red';
-        gameData.cardElList[gameData.otherPlayerCurrentCard].dataset.pawn = 'black';
-
+     
         gameData.validPathsStrings = getAllClickablePaths();
         document.getElementById('end-button').addEventListener('click', () => {
             if (!canEndPath()) return;
             endTurn();
         })
 
-        updateScreenCurrentPath();
+        updateScreen();
+
+        const paramsString = window.location.search;
+        const searchParams = new URLSearchParams(paramsString);
+        if (searchParams.has('r')) {
+            handleWebSocket(searchParams.get("r"));
+        };
     }
 
-
     initGame();
-
 </script>
 
 </html>
