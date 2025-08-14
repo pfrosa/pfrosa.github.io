@@ -1,0 +1,401 @@
+/* Get the wider font TUNGSTEN IS THE CORRECT ONE*/
+@font-face {
+    font-family: 'Impact';
+    src: url('./impact.ttf');
+}
+
+:root {
+    /* font-size: 86px; */
+}
+
+[class$="desc"] {
+    /* font-weight: 400 !important; */
+}
+
+img {
+    /* object-fit: cover !important; */
+}
+
+/* The most common card size for board games is 2.5 x 3.5 inches (63.5 x 88.9 mm).  */
+
+body {
+    padding: 3rem;
+    display: grid;
+    grid-template-columns: repeat(3, min-content);
+    gap: 2rem;
+    background-color: #888;
+    width: min-content;
+}
+
+img {
+    height: 21rem;
+    width: 15rem;
+}
+
+body>img {
+    outline: 0.3125rem solid black;
+    border-radius: 0.75rem;
+}
+
+.card {
+    --card-color: white;
+    position: relative;
+    /* #222 previously */
+    --cor-escura: black;
+    display: flex;
+    flex-direction: column;
+    justify-content: end;
+    outline: 0.3125rem solid black;
+    border-radius: 0.75rem;
+    height: 21rem;
+    width: 15rem;
+    overflow: hidden;
+    background-repeat: no-repeat;
+    background-position: center, 0rem 7.5rem, 0rem 7.5rem;
+    background-size: 100% 100%, auto 100%, auto 100%;
+    background-blend-mode: multiply, overlay;
+}
+
+body>.card:nth-child(9) {
+    outline-color: red;
+}
+
+
+/* @media print { */
+
+@page {
+    margin: 0.5cm;
+    size: a4 portrait;
+}
+
+body {
+    min-width: 21cm !important;
+    display: flex;
+    flex-wrap: wrap;
+    padding: 0;
+    gap: 0.5cm;
+    background-color: transparent;
+}
+
+body>.card:nth-child(9) {
+    margin-bottom: 6cm;
+}
+
+body>img {
+    display: none
+}
+
+.card {
+    flex-shrink: 0;
+    outline: none;
+    min-width: 6.6cm;
+    min-height: 8.8cm;
+}
+
+/* } */
+
+.card img {
+    position: absolute;
+    object-fit: cover;
+    object-position: 0 1.8rem;
+    box-sizing: border-box;
+    width: 100%;
+    top: 0;
+    pointer-events: none;
+    filter: drop-shadow(14px 0.438rem 0 var(--card-color));
+    /* unchanged */
+}
+
+.text-box {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 9.84rem;
+    font-family: 'Roboto';
+    /* border-top: 0.0625rem solid red; */
+    /* opacity: 0.8; */
+}
+
+
+[class$="desc"] {
+    display: grid;
+    place-content: center;
+    font-size: 0.51rem;
+    line-height: 150%;
+    font-weight: lighter;
+    letter-spacing: 0.0575rem;
+    word-spacing: -0.07rem;
+    text-align: center;
+    translate: 0rem calc(-1 * var(--translate-down) - 0.0625rem);
+    -webkit-text-stroke: 0.5px currentColor;
+    /* unchanged */
+}
+
+[class$="desc"] b {
+    font-weight: 600;
+    font-size: 112%;
+    letter-spacing: 0.125rem;
+}
+
+[class$="desc"] span {
+    padding: 0 1.125rem;
+}
+
+
+[class$="title"] {
+    width: max-content;
+    padding: 0.3125rem;
+    padding-bottom: 0.4375rem;
+    padding-left: 0.25rem;
+    text-align: center;
+    translate: 0 var(--translate-down);
+    z-index: 1;
+    mix-blend-mode: darken
+}
+.power-title {
+    mix-blend-mode: lighten;
+}
+.power-title,
+.power-desc {
+    color: white;
+    background-color: var(--cor-escura);
+}
+
+.deploy-title,
+.deploy-desc {
+    color: black;
+    background-color: var(--card-color);
+    margin-right: 0.875rem;
+}
+
+.power-desc {
+    height: 3.3rem;
+    margin-left: 1.4375rem;
+    clip-path: polygon(0% 0%, 100% 0%, 100% 76%, 6% 100%);
+}
+
+.power-desc span {
+    rotate: -1.5deg;
+}
+
+.deploy-desc {
+    height: 3.54rem;
+    font-size: 0.6rem;
+    margin-right: 1.125rem;
+    clip-path: polygon(0% 20%, 100% 0%, 95% 100%, 0 90%);
+    translate: 0rem calc(-1 * var(--translate-down) - 0.25rem);
+}
+
+.deploy-desc span {
+    padding: 0 0.9375rem;
+    padding-top: 0.625rem;
+}
+
+.power-title {
+    width: 3.3rem;
+    text-align: center;
+    margin-left: 1rem;
+    transform: rotate(2deg);
+    clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 3% 100%);
+}
+
+.deploy-title {
+    width: 3.12rem;
+    align-self: flex-end;
+    transform: rotate(-2deg);
+    clip-path: polygon(0% 0%, 100% 0%, 97% 100%, 0% 100%);
+}
+
+.power-title,
+.deploy-title {
+    font-family: "Impact";
+    letter-spacing: 0.0875rem;
+    font-size: 0.9rem;
+}
+
+[class^="wrapper"] {
+    --translate-down: 0.3125rem;
+    display: flex;
+    flex-direction: column;
+    translate: 0rem calc(-1 * var(--translate-down));
+}
+
+.wrapper-power {
+    filter: drop-shadow(-00.06125rem 0.438rem 0 var(--card-color));
+    /* unchanged */
+}
+
+.wrapper-deploy {
+    --translate-down: 0.4375rem;
+    filter: drop-shadow(00.06125rem 0.438rem 0px var(--cor-escura));
+    /* unchanged */
+    translate: 0 -1.125rem;
+}
+
+[class^="wrapper"] span {
+    /* workarround to fix blurriness */
+    filter: brightness(1);
+}
+
+.card-top {
+    z-index: 3;
+    display: grid;
+    grid-template-areas:
+        "TITLE X"
+        "SUB X";
+    grid-template-rows: auto 1fr;
+    grid-template-columns: 10.75rem auto;
+    margin-bottom: auto;
+    margin-top: 1.86rem;
+    filter: brightness(1);
+    font-family: 'Impact';
+}
+
+.card-title,
+.card-x {
+    text-shadow:
+        0.06125rem 0.06125rem 0 white,
+        0.06125rem -0.06125rem 0 white,
+        -0.06125rem 0.06125rem 0 white,
+        -0.06125rem -0.06125rem 0 white;
+    /* unchanged */
+}
+
+.card-title {
+    padding: 0;
+    grid-area: TITLE;
+    margin-left: 1.6875rem;
+    letter-spacing: 0.1rem;
+    line-height: 1;
+    font-size: 1.8rem;
+
+}
+
+.card-subtitle {
+    font-size: 0.8rem;
+    padding: 0;
+    margin-left: 1.4125rem;
+    letter-spacing: 0.02210rem;
+    word-spacing: 0.01rem;
+    grid-area: SUB;
+    /* color: red !important */
+
+}
+
+.card-x {
+    margin-top: 00.06125rem;
+    display: flex;
+    font-size: 0.8rem;
+    gap: 0.4em;
+    grid-area: X;
+    display: flex;
+    align-items: start;
+    flex-direction: column;
+}
+
+.card-x:has(div[style]) div[style] {
+   translate: 0.5em;
+}
+
+
+.card-x div {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    width: 100%;
+    gap: 0.4em;
+}
+
+.cross {
+    font-family: sans-serif;
+    display: inline-block;
+    line-height: 50%;
+    font-size: 325%;
+    rotate: 45deg;
+}
+
+:root {
+    --bay-leaf: #7faa99;
+    --viridian-green: #698579;
+    --tara: #c8efd2;
+
+    --wheat: #f3e0a8;
+    --saffron: #f4c736;
+    --champagne: #faf1cb;
+
+    --old-rose: #c37e7d;
+    --copper-rust: #a04b4e;
+    --azalea: #f9d3d2;
+
+    --cadet-blue: #b6b9c8;
+    --hoki: #647c9e;
+    --tropical-blue: #d5e5f8;
+
+    --asphalt: #040102;
+
+    /* CSS text colors */
+    --stromboli: #305a44;
+    --solid-pink: #762f31;
+    --blue-bayoux: #4e637e;
+    --old-gold: #d3a737;
+}
+
+.yellow-card {
+    --card-color: var(--champagne);
+    background-image: linear-gradient(100deg, var(--wheat) 50%, var(--saffron) 50%), url(./dots.svg), linear-gradient(white, var(--old-gold));
+}
+
+.yellow-card .card-subtitle {
+    color: var(--old-gold)
+}
+
+.green-card {
+    --card-color: var(--tara);
+    background-image: linear-gradient(100deg, var(--bay-leaf) 50%, var(--viridian-green) 50%), url(./dots.svg), linear-gradient(white, var(--stromboli));
+}
+
+.green-card .card-subtitle {
+    color: var(--stromboli)
+}
+
+
+.red-card {
+    --card-color: var(--azalea);
+    background-image: linear-gradient(100deg, var(--old-rose) 50%, var(--copper-rust) 50%), url(./dots.svg), linear-gradient(white, var(--solid-pink));
+}
+
+.red-card .card-subtitle {
+    color: var(--solid-pink)
+}
+
+.blue-card {
+    --card-color: var(--tropical-blue);
+    background-image: linear-gradient(100deg, var(--cadet-blue) 50%, var(--hoki) 50%), url(./dots.svg), linear-gradient(white, var(--blue-bayoux));
+}
+
+.blue-card .card-subtitle {
+    color: var(--blue-bayoux)
+}
+
+/* debug styling 
+ 
+ [class^="wrapper"] {
+     filter: none;
+ }
+
+ [class^="wrapper"] div {
+     mix-blend-mode: difference;
+     background-color: purple;
+     opacity: 0.4;
+     color: white;
+     outline: 0.25rem solid red;
+ }
+*/
+
+.card {
+    /* background-image: none !important; */
+}
+
+/* 
+  style="--card-color: #fed3cc;  background-image: linear-gradient(100deg,#d07c79 50%, #b04647 50%), url(./dots.svg), linear-

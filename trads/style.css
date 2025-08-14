@@ -1,0 +1,307 @@
+ /* Get the wider font TUNGSTEN IS THE CORRECT ONE*/
+ @font-face {
+     font-family: 'Impact';
+     src: url('./impact.ttf');
+ }
+
+ /* The most common card size for board games is 2.5 x 3.5 inches (63.5 x 88.9 mm).  */
+
+ body {
+     padding: 3rem;
+     display: grid;
+     grid-template-columns: repeat(3, min-content);
+     gap: 2em;
+     background-color: #888;
+     width: min-content;
+ }
+
+ img {
+     height: 3.5in;
+     width: 2.5in;
+ }
+
+ body>img {
+     outline: 5px solid black;
+     border-radius: 12px;
+ }
+
+ .card {
+     --card-color: white;
+     position: relative;
+     /* #222 previously */
+     --cor-escura: black;
+     display: flex;
+     flex-direction: column;
+     justify-content: end;
+     outline: 5px solid black;
+     border-radius: 12px;
+     height: 3.5in;
+     width: 2.5in;
+     overflow: hidden;
+     background-repeat: no-repeat;
+     background-position: center, 0px 120px, 0px 120px;
+     background-size: 100% 100%, auto 100%, auto 100%;
+     background-blend-mode: multiply, overlay;
+ }
+
+ .card img {
+     position: absolute;
+     object-fit: cover;
+     object-position: 0 0.3in;
+     box-sizing: border-box;
+    width: 100%;
+     top: 0;
+     pointer-events: none;
+     filter: drop-shadow(14px 7px 0 var(--card-color));
+ }
+
+ .text-box {
+     display: flex;
+     flex-direction: column;
+     justify-content: space-between;
+     height: 1.64in;
+     font-family: 'Roboto';
+     /* border-top: 1px solid red; */
+     /* opacity: 0.8; */
+ }
+
+
+ [class$="desc"] {
+     display: grid;
+     place-content: center;
+     font-size: 0.085in;
+     line-height: 150%;
+     font-weight: 200;
+     letter-spacing: 1.4px;
+     text-align: center;
+     translate: 0px calc(-1 * var(--translate-down) - 1px);
+     -webkit-text-stroke: 0.5px currentColor;
+ }
+
+ [class$="desc"] b {
+     font-weight: 600;
+     font-size: 112%;
+     letter-spacing: 2px;
+ }
+
+ [class$="desc"] span {
+     padding: 0 18px;
+ }
+
+
+ [class$="title"] {
+     width: max-content;
+     padding: 5px;
+     padding-bottom: 7px;
+     padding-left: 4px;
+     text-align: center;
+     translate: 0 var(--translate-down);
+     z-index: 2;
+ }
+
+ .power-title,
+ .power-desc {
+     color: white;
+     background-color: var(--cor-escura);
+ }
+
+ .deploy-title,
+ .deploy-desc {
+     color: black;
+     background-color: var(--card-color);
+     margin-right: 14px;
+ }
+
+ .power-desc {
+     height: 0.55in;
+     margin-left: 23px;
+     clip-path: polygon(0% 0%, 100% 0%, 100% 76%, 6% 100%);
+ }
+
+ .power-desc span {
+     rotate: -1.5deg;
+ }
+
+ .deploy-desc {
+     height: 0.59in;
+     font-size: 0.1in;
+     margin-right: 18px;
+     clip-path: polygon(0% 20%, 100% 0%, 95% 100%, 0 90%);
+     translate: 0px calc(-1 * var(--translate-down) - 4px);
+ }
+
+ .deploy-desc span {
+     padding: 0 15px;
+     padding-top: 10px;
+     padding-left: 30px;
+ }
+
+ .power-title {
+     width: 0.55in;
+     text-align: center;
+     margin-left: 16px;
+     transform: rotate(2deg);
+     clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 3% 100%);
+ }
+
+ .deploy-title {
+     width: 0.52in;
+     align-self: flex-end;
+     transform: rotate(-2deg);
+     clip-path: polygon(0% 0%, 100% 0%, 97% 100%, 0% 100%);
+ }
+
+ .power-title,
+ .deploy-title {
+     font-family: "Impact";
+     letter-spacing: 1.4px;
+     font-size: 0.15in;
+ }
+
+ [class^="wrapper"] {
+     --translate-down: 5px;
+     display: flex;
+     flex-direction: column;
+     translate: 0px calc(-1 * var(--translate-down));
+ }
+
+ .wrapper-power {
+     filter: drop-shadow(-1px 7px 0 var(--card-color));
+ }
+
+ .wrapper-deploy {
+     --translate-down: 7px;
+     filter: drop-shadow(1px 7px 0px var(--cor-escura));
+     translate: 0 -18px;
+ }
+
+ [class^="wrapper"] span {
+     /* workarround to fix blurriness */
+     filter: brightness(1);
+ }
+
+ .card-top {
+        z-index: 3;
+     display: grid;
+     grid-template-areas:
+         "TITLE X"
+         "SUB X";
+     grid-template-rows: auto 1fr;
+     grid-template-columns: 1.79in auto;
+     margin-bottom: auto;
+     margin-top: 0.31in;
+     filter: brightness(1);
+     font-family: 'Impact';
+ }
+
+ .card-title,
+ .card-x {
+     text-shadow:
+         1px 1px 0 white,
+         1px -1px 0 white,
+         -1px 1px 0 white,
+         -1px -1px 0 white;
+ }
+
+ .card-title {
+     padding: 0;
+     grid-area: TITLE;
+     margin-left: 0.27in;
+     letter-spacing: 1.6px;
+     line-height: 1;
+     font-size: 0.3in;
+ }
+
+ .card-subtitle {
+     color: hsla(8, 100%, 16%, 0.6);
+     font-size: 80%;
+     padding: 0;
+     margin-left: 0.21in;
+     letter-spacing: 0.5px;
+     grid-area: SUB;
+
+ }
+
+ .card-x {
+     margin-top: 1px;
+     display: flex;
+     font-size: 13px;
+     gap: 0.4em;
+     grid-area: X;
+     display: flex;
+     align-items: start;
+     flex-direction: column;
+ }
+
+ .card-x:has(div[style]) div {
+     justify-content: left;
+ }
+
+ .card-x:not(:has(div[style])) .cross {
+     translate: -0.2em
+ }
+
+ .card-x div {
+     display: flex;
+     align-items: center;
+     justify-content: center;
+     text-align: center;
+     width: 100%;
+     gap: 0.4em;
+ }
+
+ .cross {
+     font-family: sans-serif;
+     display: inline-block;
+     line-height: 50%;
+     font-size: 325%;
+     rotate: 45deg;
+ }
+
+ .yellow-card {
+     --card-color: lightyellow;
+     background-image: linear-gradient(100deg, #f1e0a7 50%, #f3c736 50%), url(./dots.svg), linear-gradient(white, hsl(54, 100%, 40%));
+ }
+
+ .yellow-card .card-subtitle {
+     color: hsla(43, 99%, 45%, 1);
+ }
+
+ .green-card {
+     --card-color: #c6eed1;
+     background-image: linear-gradient(100deg, #7faa99 50%, #678679 50%), url(./dots.svg), linear-gradient(white, hsl(164, 0%, 20%));
+ }
+
+ .green-card .card-subtitle {
+     color: hsl(161, 18%, 35%);
+ }
+
+
+ .red-card {
+     --card-color: #fed3cc;
+     background-image: linear-gradient(100deg, #d07c79 50%, #b04647 50%), url(./dots.svg), linear-gradient(white, #777);
+ }
+
+ /* debug styling 
+  
+ [class^="wrapper"] {
+     filter: none;
+ }
+
+ [class^="wrapper"] div {
+     mix-blend-mode: difference;
+     background-color: purple;
+     opacity: 0.4;
+     color: white;
+     outline: 4px solid red;
+ }
+*/
+
+ .card {
+     /* background-image: none !important; */
+ }
+
+ /* 
+  style="--card-color: #fed3cc;  background-image: linear-gradient(100deg,#d07c79 50%, #b04647 50%), url(./dots.svg), linear-gradient(white, #555);"
+ 
+ */
