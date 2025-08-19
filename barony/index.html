@@ -13,6 +13,7 @@
         <option value="2">2 Players</option>
         <option value="3" selected>3 Players</option>
         <option value="4">4 Players</option>
+        <option value="5">5 Players</option>
     </select>
     <div class="map" id="map">
         <!-- Rows will be generated here -->
@@ -50,6 +51,10 @@
         4: {
             rows: [5, 7, 6, -6, 7, 5],
             positions: [0, 0, -0.5, 0.5, 1, 1]
+        },
+        5: {
+            rows: [5,7,7,7,7,7,5],
+            positions: [0, 0,1,0,-1,0]
         },
     }
     const genMap = (nPlayers) => {
