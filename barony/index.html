@@ -1,1 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
 
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Barony map</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <select name="nPlayers" id="nPlayers">
+        <option value="2">2 Players</option>
+        <option value="3" selected>3 Players</option>
+        <option value="4">4 Players</option>
+    </select>
+    <div class="map" id="map">
+        <!-- Rows will be generated here -->
+    </div>
+    <template id="trimino-down-template">
+        <div class="trimino-down">
+            <div class="hex">A</div>
+            <div class="hex">B</div>
+            <div class="hex">C</div>
+        </div>
+    </template>
+    <template id="trimino-up-template">
+        <div class="trimino-up">
+            <div class="hex">A</div>
+            <div class="hex">B</div>
+            <div class="hex">C</div>
+        </div>
+    </template>
+</body>
+<script>
+    const mapEl = document.getElementById('map');
+    const nPlayersSelect = document.getElementById('nPlayers');
+    nPlayersSelect.addEventListener('change', (e) => {
+        genMap(parseInt(e.target.value));
+    });
+    const rows_positions_players = {
+        2: {
+            rows: [3, 4, -4, 4, 3],
+            positions: [0, 0.5, -0.5, 0.5, 1]
+        },
+        3: {
+            rows: [5, 5, 7, 7, 5, 5],
+            positions: [0, -1, -1, 0, 0, -1]
+        },
+        4: {
+            rows: [5, 7, 6, -6, 7, 5],
+            positions: [0, 0, -0.5, 0.5, 1, 1]
+        },
+    }
+    const genMap = (nPlayers) => {
+        mapEl.innerHTML = '';
+        // clear the map element
+
+        const rows = rows_positions_players[nPlayers].rows; // 3 players
+        const rowsPositions = rows_positions_players[nPlayers].positions; // 3 players
+        let count = 0;
+        rows.map((row, index) => {
+            const rowEl = document.createElement('div');
+            rowEl.classList.add('row');
+            rowEl.style.gridRow = index + 1;
+            rowEl.style.marginLeft = `calc(var(--hex-size) * ${rowsPositions[index]})`;
+            const rowContent = Array(Math.abs(row)).fill(0).map((_, i) => {
+                if ((count++ + (row < 0 ? 1 : 0)) % 2 == 0) {
+                    const clone = document.getElementById('trimino-up-template').content.cloneNode(true);
+                    return clone
+                } else {
+                    const clone = document.getElementById('trimino-down-template').content.cloneNode(true);
+                    return clone;
+                }
+            });
+            rowEl.append(...rowContent);
+            mapEl.appendChild(rowEl);
+        });
+    }
+
+    genMap(parseInt(nPlayersSelect.value)); // default to 3 players
+
+</script>
+
+</html>
