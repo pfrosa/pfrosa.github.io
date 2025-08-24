@@ -181,7 +181,7 @@ const existingCards = {
         cost: 3,
         textEN: `<b>${symbols.triggerOnAttack} :</b> your opponent discards 1 card at random.`,
         textPT: `<b>${symbols.triggerOnAttack} :</b> Seu oponente descarta 1 carta aleatorioamente.`, //name a card, show hand and discard it
-        img: 'goatSage.png',
+        img: 'goatsage.png',
         titleEN: 'Goat Sage',
         titlePT: 'Bode Sábio',
         monsterStatus: '2'
@@ -438,4 +438,5 @@ const cardsOnPosition = {
 };
 
 // const language = 'EN';
+
 const language = 'PT';
