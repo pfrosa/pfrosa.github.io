@@ -200,7 +200,7 @@ const existingCards = {
         cost: 6,
         textEN: `<b>${symbols.onceAturn} :</b> You may cancel a action card.`,
         textPT: `<b>${symbols.onceAturn} :</b> Você pode cancelar uma carta de ação.`, //name a card, show hand and discard it
-        img: 'queen.png',
+        img: 'Queen.png',
         titleEN: 'Royal Witch',
         titlePT: 'Bruxa Real',
         monsterStatus: '6'
@@ -440,3 +440,4 @@ const cardsOnPosition = {
 // const language = 'EN';
 
 const language = 'PT';
+
