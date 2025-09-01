@@ -1,1 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
 
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Erratas</title>
+    <style>
+        :root {
+            font-family: monospace;
+        }
+
+        body {
+            width: 210mm;
+            padding: 0;
+            margin: 0;
+            font-size: 4mm;
+        }
+
+        .erratas-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 5mm;
+            width: 100%;
+        }
+
+        .card-errata {
+            display: flex;
+            width: 240px;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 20px;
+            break-inside: avoid;
+        }
+
+        .card-errata span {
+            padding: 0.5rem;
+            text-align: left;
+            margin-top: 10px;
+        }
+
+        .card-errata img {
+            width: 100%;
+            height: auto;
+        }
+
+        .card-errata b {
+            display: inline-block;
+            color: darkred;
+        }
+
+        .card-errata b:first-child {
+            display: block;
+        }
+
+        h1 {
+            text-align: center;
+            margin: 0;
+            margin-bottom: 10mm;
+        }
+
+        @page {
+            margin: 10mm;
+            size: A4;
+        }
+
+        @media not print {
+            body {
+                padding: 3rem;
+            }
+        }
+    </style>
+</head>
+<!-- ADD HISTORY OF ERRATAS AND FOLDING CARROUSELL -->
+<body>
+    <h1> Erratas update 0.1 e 0.2 - 01/09/25 </h1>
+    <div class="erratas-container">
+        <div class="card-errata">
+            <img src="./angel-01-09-25.png" />
+            <span><b>Mudanças:</b> Não pode mais reviver outro Anjo. </span>
+        </div>
+        <div class="card-errata">
+            <img src="./cow-01-09-25.png" />
+            <span><b>Mudanças:</b> Cura diminuida de <b>5 -> 2</b></span>
+        </div>
+        <div class="card-errata">
+            <img src="./defend-01-09-25.png" />
+            <span><b>Mudanças:</b> Redução de custo de <b>1 -> 0</b></span>
+        </div>
+        <div class="card-errata">
+            <img src="./eye-01-09-25.png" />
+            <span><b>Mudanças:</b> Removido habilidade de roubar cartas</span>
+        </div>
+        <div class="card-errata">
+            <img src="./gambler-01-09-25.png" />
+            <span><b>Mudanças:</b> Efeito agora é obrigatorio, e a proesa foi corrigida/aumentada de <b>0 ->
+                    1</b></span>
+        </div>
+        <div class="card-errata">
+            <img src="./goblin-01-09-25.png" />
+            <span><b>Mudanças:</b> Redução de custo de <b>2 -> 0</b> </span>
+        </div>
+        <div class="card-errata">
+            <img src="./healing-01-09-25.png" />
+            <span><b>Mudanças:</b> Redução de custo de <b>1 -> 0</b></span>
+        </div>
+        <div class="card-errata">
+            <img src="./royalWitch-01-09-25.png" />
+            <span><b>Mudanças:</b> Efeito retrabalhado </span>
+        </div>
+        <div class="card-errata">
+            <img src="./skeletonKid-01-09-25.png" />
+            <span><b>Mudanças:</b> Efeito trocado ao invés de fazer o oponente descartar uma carta, adiciona cartas do
+                cimiterio à mão </span>
+        </div>
+        <div class="card-errata">
+            <img src="./skeletonKing-01-09-25.png" />
+            <span><b>Mudanças:</b> Efeito trocado para uma vez por turno ressucitar uma carta de esqueleto</span>
+        </div>
+        <div class="card-errata">
+            <img src="./soulrelease-01-09-25.png" />
+            <span><b>Mudanças:</b> Custo aumentado de <b>1 -> 7</b>, numero de cartas recuperadas diminuido de <b>4 ->
+                    3</b></span>
+        </div>
+        <div class="card-errata">
+            <img src="./whirlwind-01-09-25.png" />
+            <span><b>Mudanças:</b> Imunidade para todos os naipes nos 2 JOKER's</span>
+        </div>
+    </div>
+
+</body>
+
+</html>
