@@ -10,11 +10,11 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Nova+Mono&display=swap" rel="stylesheet">
     <script src="../simulator/defs.js"></script>
-    <title>Cards</title>
+    <title>LCG - Tabela de cartas</title>
 </head>
-
 <body>
-    <h1> LCG - Card table </h1>
+    <h1> LCG - Tabela de cartas </h1>
+    <label for="invert"> Inverter cores <input type="checkbox" name="invert" id="invert"></label>
     <table>
         <thead>
             <th>Custo</th>
@@ -30,6 +30,10 @@
 </body>
 <script>
     const tbody = document.getElementById(`tbody`);
+    const invertColors = document.getElementById(`invert`);
+    invertColors.checked = localStorage.getItem('invert');
+    invertColors.addEventListener('change', () => localStorage.setItem('invert', invertColors.checked));
+
     const position =
         Object.keys(cardsOnPosition)
             .reduce((acc, pos) => ({
@@ -40,11 +44,11 @@
     const positionReplaced = Object.keys(position).reduce((acc, key) => ({
         ...acc,
         [key]: position[key].join(`, `)
-        .replaceAll('-spades', `&#9824;`)
-        .replaceAll('-diamonds', `&#9830;`)
-        .replaceAll('-clubs', `&#9827;`)
-        .replaceAll('-hearts', `&#9829;`)
-        .replaceAll(/JOKER-.*$/g, `JOKER`)
+            .replaceAll('-spades', `&#9824;`)
+            .replaceAll('-diamonds', `&#9830;`)
+            .replaceAll('-clubs', `&#9827;`)
+            .replaceAll('-hearts', `&#9829;`)
+            .replaceAll(/JOKER-.*$/g, `JOKER`)
     }), {})
 
     const trs = Object.keys(existingCards).map(card => `

@@ -4,10 +4,26 @@ body {
     padding: 0;
 }
 
-h1 {
+body:has(#invert:checked) {
+    filter: invert(1);
+    background: black;
+}
+
+label {
     text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 1rem;
     margin-bottom: 1rem
 }
+
+h1 {
+    text-align: center;
+    margin: 0;
+}
+
 img {
     width: 100px;
     aspect-ratio: 1;
@@ -27,4 +43,12 @@ th {
     border: 2px solid black;
     padding: 0.3rem;
     text-align: center;
+}
+
+label:has(#invert:checked) + table td:nth-child(5){
+    filter: invert(1); 
+}
+
+label:has(#invert:checked) + table td:nth-child(5) img{
+    filter: drop-shadow(1.5px 1.5px white)
 }
