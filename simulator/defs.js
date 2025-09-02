@@ -58,6 +58,7 @@ const symbols = {
     triggerOnAttack: '&#9876;', //https://www.utf8icons.com/character/9876/crossed-swords
     ongoingEffect: '&#9733;',//https://www.utf8icons.com/character/9733/black-star black star, aura, ongoing effect;
     attachCard: '&#9167;', // https://www.utf8icons.com/character/9167/eject-symbol
+    allSuits: `&#9824;/&#9827;/&#9830;/&#9829;`, // all suits symbol
     [SUITS.SPADES]: '&#9824;',
     [SUITS.CLUBS]: '&#9827;',
     [SUITS.DIAMONDS]: '&#9830;',
@@ -104,8 +105,8 @@ const existingCards = {
     },
     darkFire: {
         cost: 4,
-        textEN: `<b>${symbols.instantCast} :</b> Deal 4 dammage to your opponent.`,
-        textPT: `<b>${symbols.instantCast} :</b> Cause 4 de dano ao seu oponente.`,
+        textEN: `<b>${symbols.instantCast} :</b> Deal 7 dammage to your opponent.`,
+        textPT: `<b>${symbols.instantCast} :</b> Cause 7 de dano ao seu oponente.`,
         img: 'meteor.png',
         titleEN: 'Dark Fire',
         titlePT: 'Fogo Obscuro',
@@ -135,7 +136,7 @@ const existingCards = {
         titlePT: 'Liberação da Alma',
     },
     healingFlame: {
-        cost: 1,
+        cost: 0,
         textEN: `<b>${symbols.instantCast} :</b> Heal 5.`,
         textPT: `<b>${symbols.instantCast} :</b> Cure 5.`,
         img: 'heal.png',
@@ -144,7 +145,7 @@ const existingCards = {
         titlePT: 'Fogo curativo',
     },
     defend: {
-        cost: 1,
+        cost: 0,
         textEN: `<b>${symbols.instantCast} :</b> Cancel an attack.`,
         textPT: `<b>${symbols.instantCast} :</b> Cancele um ataque.`,
         img: 'block.png',
@@ -162,16 +163,16 @@ const existingCards = {
     },
     allSeeingEye: {
         cost: 3,
-        textEN: `<b>${symbols.instantCast} :</b> Look at your opponents hand and steal a card from it.`,
-        textPT: `<b>${symbols.instantCast} :</b> Olha a mão de seu oponente, e roube uma carta dela.`,
+        textEN: `<b>${symbols.instantCast} :</b> Look at your opponents hand.`,
+        textPT: `<b>${symbols.instantCast} :</b> Olha a mão de seu oponente.`,
         img: 'eye.png',
         titleEN: 'All Seeing Eye',
         titlePT: 'Olho que tudo vê',
     },
     skeletonKid: {
         cost: 1,
-        textEN: `<b>${symbols.triggerOnDiscard} :</b> your opponent discards 1 card at random.`,
-        textPT: `<b>${symbols.triggerOnDiscard} :</b> Seu oponente descarta 1 carta aleatorioamente.`, //name a card, show hand and discard it
+        textEN: `<b>${symbols.triggerOnDiscard} :</b> adicione uma carta do descarte à sua mão.`,
+        textPT: `<b>${symbols.triggerOnDiscard} :</b> add a card from the discard to your hand.`, //name a card, show hand and discard it
         img: 'skeleKid.png',
         titleEN: 'Skeleton Kid',
         titlePT: 'Esqueleto Infante',
@@ -181,7 +182,7 @@ const existingCards = {
         cost: 3,
         textEN: `<b>${symbols.triggerOnAttack} :</b> your opponent discards 1 card at random.`,
         textPT: `<b>${symbols.triggerOnAttack} :</b> Seu oponente descarta 1 carta aleatorioamente.`, //name a card, show hand and discard it
-        img: 'goatsage.png',
+        img: 'goatSage.png',
         titleEN: 'Goat Sage',
         titlePT: 'Bode Sábio',
         monsterStatus: '2'
@@ -198,9 +199,9 @@ const existingCards = {
     },
     royalWitch: {
         cost: 6,
-        textEN: `<b>${symbols.onceAturn} :</b> You may cancel a action card.`,
-        textPT: `<b>${symbols.onceAturn} :</b> Você pode cancelar uma carta de ação.`, //name a card, show hand and discard it
-        img: 'Queen.png',
+        textEN: `<b>${symbols.ongoingEffect} :</b> At the start of every turn, name a suit. Neither player can use cards of the named suit.`,
+        textPT: `<b>${symbols.ongoingEffect} :</b> No inicio de cada turno, nomeie um naipe. Nenhum jogador pode usar cartas do naipe nomeado.`, //name a card, show hand and discard it
+        img: 'queen.png',
         titleEN: 'Royal Witch',
         titlePT: 'Bruxa Real',
         monsterStatus: '6'
@@ -220,11 +221,11 @@ const existingCards = {
         //Braces to card names
         textEN: `
             Imunity to ${symbols[SUITS.CLUBS]} <br/>
-            <b>${symbols.triggerOnPlay} :</b> Add to your hand up to 3 [Skeleton] cards from your discard pile.
+            <b>${symbols.onceAturn} :</b> Summon a [Skeleton] card from your discard pile.
         `,
         textPT: `
             Imunidade à ${symbols[SUITS.CLUBS]} <br/>
-            <b>${symbols.triggerOnPlay} :</b> Adicione à sua mão até 3 cartas [Esqueleto] de sua pilha de descartes.
+            <b>${symbols.onceAturn} :</b> Invoque uma carta [Esqueleto] de sua pilha de descartes.
         `,
         img: 'skeleking.png',
         titleEN: 'Skeleton King',
@@ -242,14 +243,14 @@ const existingCards = {
         monsterStatus: '3'
     },
     greedyGoblin: {
-        cost: 2,
+        cost: 0,
         textEN: `<b>${symbols.triggerOnDiscard} :</b> Draw 2 cards.`,
         textPT: `<b>${symbols.triggerOnDiscard} :</b> Compre 2 cartas.`,
         img: 'loot-goblin.png',
         titleEN: 'Greedy Goblin',
         titlePT: 'Goblin Ganancioso',
         cardMargin: '3rem',
-        monsterStatus: '3'
+        monsterStatus: '2'
     },
     goblinKing: {
         cost: 6,
@@ -306,14 +307,16 @@ const existingCards = {
         cost: 3,
         textEN: `
         <b>${symbols.ongoingEffect} :</b> Can't attack or be attacked<br/>
-        <b>${symbols.onceAturn} :</b> Roll a 6-sided dice, apply:
+        <b>${symbols.ongoingEffect} :</b> On the start of your turn,
+        Roll a 6-sided dice and apply:
         1 - Kill this card;
         2-5: Take 1 damage;
         6: Steal an opponents monster.
         `,
         textPT: `
         <b>${symbols.ongoingEffect} :</b> Não pode atacar ou ser atacado<br/>
-        <b>${symbols.onceAturn} :</b> Role um dado de 6 lados, aplique:
+        <b>${symbols.ongoingEffect} :</b> No inicio de seu turno,
+        Role um dado de 6 lados e aplique:
         1 - Mate essa carta;
         2-5: Tome 1 de dano;
         6: Roube uma carta de monstro de seu oponente.
@@ -327,10 +330,10 @@ const existingCards = {
     angel: {
         cost: 3,
         textEN: `
-        <b>${symbols.triggerOnPlay} / ${symbols.triggerOnDiscard} :</b> Play a monster from your discard paying half it's cost (rounded-up).
+        <b>${symbols.triggerOnPlay} / ${symbols.triggerOnDiscard} :</b> Play a monster (other than an Angel) from your discard paying half it's cost (rounded-up).
         `,
         textPT: `
-        <b>${symbols.triggerOnPlay} / ${symbols.triggerOnDiscard} :</b> Jogue um monstro de sua pilha de descarte pagando metade de seu custo (arredondado pra cima).
+        <b>${symbols.triggerOnPlay} / ${symbols.triggerOnDiscard} :</b> Jogue um monstro (que não seja um Anjo) de sua pilha de descarte pagando metade de seu custo (arredondado pra cima).
         `,
         img: 'angel.png',
         titleEN: 'The Angel',
@@ -340,11 +343,11 @@ const existingCards = {
     whirlwind: {
         cost: 10,
         textEN: `
-        Imunity to ${symbols.currentSuit} <br/>
+        Imunity to ${symbols.allSuits} <br/>
         <b>${symbols.instantCast} :</b> Destroy all monsters cards on the field.
         `,
         textPT: `
-        Imunidade à ${symbols.currentSuit} <br/>
+        Imunidade à ${symbols.allSuits} <br/>
         <b>${symbols.instantCast} :</b> Destrua todas as cartas de monstro no campo.
         `,
         img: 'whirlwind.png',
@@ -437,7 +440,22 @@ const cardsOnPosition = {
     [`JOKER-${SUITS.BLACK}`]: existingCardsWithId.whirlwind,
 };
 
+const {darkfire, soulRelease, healingFlame, defend, allSeeingEye, skeletonKid, skeletonKing, cowPriest, greedyGoblin, royalWitch, gambler, angel, whirlwind} = existingCardsWithId; 
+const erratas = {
+    darkfire,
+    soulRelease,
+    healingFlame,
+    defend,
+    allSeeingEye,
+    skeletonKid,
+    skeletonKing,
+    cowPriest,
+    greedyGoblin,
+    royalWitch,
+    gambler,
+    angel,
+    whirlwind
+};
+const ONLY_ERRATA_PRINT = false;
 // const language = 'EN';
-
 const language = 'PT';
-
