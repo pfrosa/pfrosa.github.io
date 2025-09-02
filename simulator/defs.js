@@ -113,7 +113,7 @@ const existingCards = {
     shock: {
         cost: 'X',
         textEN: `<b>${symbols.instantCast} :</b> Copy the las played action card on this turn (X is the copied's card cost).`,
-        textPT: `<b>${symbols.instantCast} :</b> Copia e ultima carta de ação jogada neste turno (X é o custo da carta copiada).`, //<b>${symbols.currentSuit}</b> 
+        textPT: `<b>${symbols.instantCast} :</b> Copia e ultima carta de ação jogada neste turno (X is the copied's card cost).`, //<b>${symbols.currentSuit}</b> 
         img: 'shock.png',
         titleEN: 'Shock',
         titlePT: 'Choque',
@@ -127,9 +127,9 @@ const existingCards = {
         titlePT: 'Explosão',
     },
     soulRelease: {
-        cost: 7,
-        textEN: `<b>${symbols.instantCast} :</b> Add a 3 cards from you discard pile to your hand, then you remove [Soul Release] from the game.`,
-        textPT: `<b>${symbols.instantCast} :</b> Adicione 3 cards de sua pilha de descartes a sua mão, e entao remova [Liberação da Alma] do jogo.`,
+        cost: 1,
+        textEN: `<b>${symbols.instantCast} :</b> Add a 4 cards from you discard pile to your hand, then you remove [Soul Release] from the game.`,
+        textPT: `<b>${symbols.instantCast} :</b> Adicione 4 cards de sua pilha de descartes a sua mão, e entao remova [Liberação da Alma] do jogo.`,
         img: 'soul-release.png',
         titleEN: 'Soul Release',
         titlePT: 'Liberação da Alma',
@@ -181,7 +181,7 @@ const existingCards = {
         cost: 3,
         textEN: `<b>${symbols.triggerOnAttack} :</b> your opponent discards 1 card at random.`,
         textPT: `<b>${symbols.triggerOnAttack} :</b> Seu oponente descarta 1 carta aleatorioamente.`, //name a card, show hand and discard it
-        img: 'goatsage.png',
+        img: 'goatSage.png',
         titleEN: 'Goat Sage',
         titlePT: 'Bode Sábio',
         monsterStatus: '2'
@@ -200,7 +200,7 @@ const existingCards = {
         cost: 6,
         textEN: `<b>${symbols.onceAturn} :</b> You may cancel a action card.`,
         textPT: `<b>${symbols.onceAturn} :</b> Você pode cancelar uma carta de ação.`, //name a card, show hand and discard it
-        img: 'Queen.png',
+        img: 'queen.png',
         titleEN: 'Royal Witch',
         titlePT: 'Bruxa Real',
         monsterStatus: '6'
@@ -294,8 +294,8 @@ const existingCards = {
     },
     cowPriest: {
         cost: 5,
-        textEN: `<b>${symbols.onceAturn} :</b> Heal 2`,
-        textPT: `<b>${symbols.onceAturn} :</b> Cure 2`,
+        textEN: `<b>${symbols.onceAturn} :</b> Heal 5`,
+        textPT: `<b>${symbols.onceAturn} :</b> Cure 5`,
         img: 'cow.png',
         titleEN: 'Bull Helper',
         titlePT: 'Boi Ajudante',
@@ -438,6 +438,4 @@ const cardsOnPosition = {
 };
 
 // const language = 'EN';
-
 const language = 'PT';
-
