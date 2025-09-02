@@ -1,0 +1,16 @@
+* {
+    box-sizing: border-box;
+}
+body{
+    /* display: flex; */
+    flex-direction: column;
+    align-content: center;
+}
+
+#csvInput{
+    display: block;
+}
+
+#canvas {
+    border: 1px solid black;
+}

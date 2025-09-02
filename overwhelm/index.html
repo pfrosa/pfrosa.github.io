@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Overwhelm</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      column-count: 2;
+      column-gap: 2rem;
+      padding: 1rem;
+      background: #fdfdfd;
+      line-height: 1.6;
+    }
+    h1, h2, h3 {
+      color: #b30000;
+      break-inside: avoid;
+    }
+    section {
+      break-inside: avoid;
+      margin-bottom: 1em;
+    }
+    ul {
+      padding-left: 20px;
+    }
+    .svg-icon {
+      width: 20px;
+      height: 20px;
+      vertical-align: middle;
+      margin-right: 6px;
+      fill: currentColor;
+    }
+
+    .suggestion {
+        font-size: 90%;
+        color: darkred;
+    }
+  </style>
+</head>
+<body>
+<!-- Drag and drop, and select cards to play -->
+  <h1>🎴Overwhelm</h1>
+
+  <section>
+    <h2>🔧 Componentes</h2>
+    <ul>
+      <li><svg class="svg-icon" viewBox="0 0 24 24"><path d="M4 4h16v16H4z"/></svg>1 baralho tradicional de 54 cartas (com 2 coringas). 1 D6 é necessario para jogar a expansao</li>
+      <li><svg class="svg-icon" viewBox="0 0 24 24"><circle cx="8" cy="12" r="2"/><circle cx="16" cy="12" r="2"/></svg>2 jogadores</li>
+      <li><svg class="svg-icon" viewBox="0 0 24 24"><rect x="4" y="4" width="6" height="16"/><rect x="10" y="4" width="6" height="16"/><rect x="16" y="4" width="4" height="16"/></svg>Espaço para 3 colunas por jogador</li>
+      <li><svg class="svg-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="6"/></svg>Uma pilha de descarte comum</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>🧑‍🤝‍🧑 Preparação</h2>
+    <ol>
+      <li>Embaralhe o baralho completo.</li>
+      <li>Cada jogador compra 5 cartas.</li>
+      <li>Escolha aleatoriamente quem começa.</li>
+      <li>No primeiro turno, não se compra carta.</li>
+    </ol>
+  </section>
+
+  <section>
+    <h2>🔁 Fluxo de Turno</h2>
+    <ol>
+      <li>Compre 1 cartas (exceto no 1º turno).</li>
+      <li>Jogue quantas cartas quiser, uma por vez.</li>
+      <li>As jogadas podem ser nas colunas ou com efeitos especiais.</li>
+        <ul><li>Ao jogar em uma coluna que ja possua uma carta, deve serguir as regras de empilhamento, e também pode-se comprar uma carta toda vez que empilha uma carta em uma coluna</li></ul>
+      <li>Finalize o turno.</li>
+    </ol>
+  </section>
+
+  <section>
+    <h2>🃏 Jogando nas Colunas</h2>
+    <p>Cada jogador possui 3 colunas imaginárias.</p>
+    <h3>✅ Regras de Empilhamento:</h3>
+    <ul>
+      <!-- <li>Apenas cartas numéricas de A a 10 e coringas podem ser colocadas nas colunas.</li> -->
+      <li>As cartas podem ser empilhadas por mesmo número <strong>ou</strong> mesmo naipe (com números diferentes).</li>
+      <li>Não é permitido misturar critérios numa mesma pilha.</li>
+      <li>Coringas valem como qualquer carta ao serem jogados.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>❌ Cancelamento de Cartas</h2>
+    <ul>
+      <li>Uma carta pode ser cancelada usando outra de mesmo número e cor oposta.</li>
+      <li>Coringas podem assumir o valor necessário para cancelar.</li>
+      <li>Cartas canceladas vão para o descarte.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>💥 Cartas de Efeito</h2>
+    <ul>
+      <li><strong>J (Valete):</strong> Compre 3 cartas para sua mão e depois descarte 2 cartas.</li>
+      <li><strong>Q (Dama):</strong> Veja a mão do oponente e troque 1 carta com ele  (é necessario ter uma carta para trocar).</li>
+      <li><strong>K (Rei):</strong> Destrói uma coluna do oponente e descarte uma carta (é necessario ter uma carta para descartar).</li>
+      <li><strong>A (Ás):</strong> Compre 2 cartas.</li>
+      <li><strong>Cartas Baixas (A-4):</strong> Jogue em uma coluna uma carta do descarte.</li>
+      <li><strong>JOKER:</strong> O coringa conta como qualquer carta no jogo de efeito ou não</li>
+    </ul>
+  </section>
+
+  <!-- <section>
+    <h2>😈 Blefe e ⚔️ Desafio</h2>
+    <ul>
+      <li>1 carta virada para baixo por coluna é permitida.</li>
+      <li>Colunas viradas não podem ser comparadas.</li>
+      <li>Se o blefe for inválido ou perder, a coluna é descartada.</li>
+      <li>Se vencer, o desafiante perde a própria coluna.</li>
+    </ul>
+  </section> -->
+
+  <section>
+    <h2>🏆 Condição de Vitória</h2>
+    <p>Você vence se 2 colunas suas forem mais fortes que as do oponente no início do seu turno (mais forte que a coluna oposta do oponente, ou seja, na mesma reta).</p>
+  </section>
+
+  <section>
+    <h2>🧮 Comparação de Colunas</h2>
+    <h3>Ordem de Força:</h3>
+    <ol>
+      <li>2-Jokers</li>
+      <li>Pilhas com Mesmo Número</li>
+      <li>Pilhas com Mesmo Naipe</li>
+      <li>Cartas únicas</li>
+    </ol>
+    <h3>Critérios de Desempate:</h3>
+    <ul>
+      <li>Pilha com mais cartas vence.</li>
+      <li>Se empatadas, vence a pilha com maior número.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>🔁 Baralho e Descarte</h2>
+    <p>Se o baralho acabar, embaralhe o descarte e continue.</p>
+  </section>
+
+  <section>
+    <h2>🃏 Expansão – Crazy Odds</h2>
+    <p>Os Coringas podem ser jogados como carta de efeito, ativando um efeito aleatório com 1d6.</p>
+    <ul>
+      <li><strong>1 – Falha Total:</strong> Passe sua vez.</li>
+      <li><strong>2 – Troca Tática:</strong> Troque uma coluna sua com uma do oponente.</li>
+      <li><strong>3 – Disparo Direcionado:</strong> Destrua 1 carta de cada coluna do oponente.</li>
+      <li><strong>4 – Vantagem Numérica:</strong> O oponente descarta até 3 cartas.</li>
+      <li><strong>5 – Lucky number 5:</strong> Compre 5 cartas.</li>
+      <li><strong>6 – Sorte Grande:</strong> O Joker entra numa coluna sua e a torna invencível ate o fim do seu proximo turno. (Nao pode ser descartada e conta como vencedora em comparacoes)</li>
+    </ul>
+  </section>
+
+</body>
+</html>
