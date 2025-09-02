@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name='og:image' content='http://pfrosa.github.io/project-thumbnails/lcg-table.png'>
+    <link rel="stylesheet" href="style.css">
+    <script src="../simulator/defs.js"></script>
+    <title>Cards</title>
+</head>
+<body>
+    <h1> LCG - Card table </h1>
+    <table>
+        <thead>
+            <th>Custo</th>
+            <th>Posicoes</th>
+            <th>Titulo</th>
+            <th>Texto</th>
+            <th>Imagem</th>
+        </thead>
+        <tbody id="tbody">
+
+        </tbody>
+    </table>
+</body>
+<script>
+    const tbody = document.getElementById(`tbody`);
+    const position =
+        Object.keys(cardsOnPosition)
+            .reduce((acc, pos) => ({
+                ...acc,
+                [cardsOnPosition[pos].id]: [pos, ...(acc[cardsOnPosition[pos].id] || [])]
+            }), {});
+
+    const positionReplaced = Object.keys(position).reduce((acc, key) => ({
+        ...acc,
+        [key]: position[key].join(`, `).replaceAll('-spades', `&#9824;`).replaceAll('-diamonds', `&#9830;`).replaceAll('-clubs', `&#9827;`).replaceAll('-hearts', `&#9829;`)
+    }), {})
+
+    const trs = Object.keys(existingCards).map(card => `
+        <tr>
+            <td>${existingCards[card].cost}</td>
+            <td>${positionReplaced[card]}</td>
+            <td>${existingCards[card].titlePT}</td>
+            <td>${existingCards[card].textPT}</td>
+            <td><img src="../simulator/${existingCards[card].img}"></td>
+        </tr>
+    ` )
+    tbody.innerHTML = trs.join(``);
+
+</script>
+
+</html>
