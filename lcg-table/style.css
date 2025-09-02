@@ -24,6 +24,7 @@ table {
 
 td,
 th {
-    border: 1px solid black;
+    border: 2px solid black;
+    padding: 0.3rem;
     text-align: center;
 }
