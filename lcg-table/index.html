@@ -31,7 +31,7 @@
 <script>
     const tbody = document.getElementById(`tbody`);
     const invertColors = document.getElementById(`invert`);
-    invertColors.checked = localStorage.getItem('invert');
+    invertColors.checked = JSON.parse(localStorage.getItem('invert') || false );
     invertColors.addEventListener('change', () => localStorage.setItem('invert', invertColors.checked));
 
     const position =
