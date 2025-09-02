@@ -10,6 +10,7 @@ body {
     margin-left: auto;
     margin-right: auto;
     max-width: 1000px;
+    background-color: hsl(265, 100%, 10%);
 }
 
 .projects {
@@ -29,13 +30,19 @@ img {
     border-radius: 5px;
 }
 
+h1 {
+    color: white;
+    padding: 0 0.5rem;
+}
+
 .project-wrapper {
+    background: white;
     aspect-ratio: 4/3;
     width: 320px;
     height: auto;
     border-radius: 6px;
     border: 1px solid transparent;
-    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+    box-shadow: rgba(0,0,0, 0.3) 0px 3px 8px;
     padding: 1rem;
 }
 
