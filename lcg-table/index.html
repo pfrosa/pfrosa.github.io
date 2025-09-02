@@ -39,7 +39,12 @@
 
     const positionReplaced = Object.keys(position).reduce((acc, key) => ({
         ...acc,
-        [key]: position[key].join(`, `).replaceAll('-spades', `&#9824;`).replaceAll('-diamonds', `&#9830;`).replaceAll('-clubs', `&#9827;`).replaceAll('-hearts', `&#9829;`)
+        [key]: position[key].join(`, `)
+        .replaceAll('-spades', `&#9824;`)
+        .replaceAll('-diamonds', `&#9830;`)
+        .replaceAll('-clubs', `&#9827;`)
+        .replaceAll('-hearts', `&#9829;`)
+        .replaceAll(/JOKER-.*$/g, `JOKER`)
     }), {})
 
     const trs = Object.keys(existingCards).map(card => `
