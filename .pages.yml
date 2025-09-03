@@ -26,17 +26,17 @@ content:
     type: file
     fields:
       - name: title
-        label: Website title
+        label: test title
         type: string
       - name: description
-        label: Website description
+        label: test desc
         type: string
         description: Will be provused for any page with no description.
       - name: url
-        label: Website URL
+        label: https://www.pfrosa.com.br/
         type: string
         pattern: ^(https?:\/\/)?(www\.)?[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}(\/[^\s]*)?$
-      - name: cover
-        label: Preview image
-        type: image
-        description: Image used in the social preview on social networks (e.g. Facebook, Twitter...)
+      # - name: cover
+      #   label: Preview image
+      #   type: image
+      #   description: Image used in the social preview on social networks (e.g. Facebook, Twitter...)
