@@ -121,7 +121,7 @@ body>img {
     place-content: center;
     font-size: 0.51rem;
     line-height: 150%;
-    font-weight: lighter;
+    /* font-weight: lighter; */
     letter-spacing: 0.0575rem;
     word-spacing: -0.07rem;
     text-align: center;
