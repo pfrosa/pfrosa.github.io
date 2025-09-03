@@ -47,7 +47,7 @@ body>img {
     width: 63.5mm;
     height: 88.9mm;
 }
-
+/* locally live server makes this not work corectly i'll need to do some work arrounds, but the best one is to not use elements directl on the <body> tag */
 body>.card:nth-child(9n) {
     break-after: page;
 }
