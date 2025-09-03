@@ -407,11 +407,12 @@ img[src="yuri-art.png"] {
     object-position: -25px 1.8rem;
 }
 
-img[src="franky-art.png"] {
+/* img[src="franky-art.png"] {
     object-position: -22px 1.8rem;
     width: 120%;
-}
+} */
 
 img[src="sylvia-art.png"] {
    object-position: 2rem 3rem;
+
 }
