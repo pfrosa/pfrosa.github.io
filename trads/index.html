@@ -59,44 +59,6 @@
             </div>
         </div>
     </div>
-    <div class="card green-card">
-        <div class="card-top">
-            <div class="card-title">ESPIÃO</div>
-            <div class="card-subtitle">Loid Forger</div>
-            <div class="card-x">
-                <div><span class="cross">+</span></div>
-            </div>
-        </div>
-        <div class="art">
-            <img src="loid-art.png" style="object-position: 1rem 1.6rem; width: 14rem;">
-        </div>
-        <div class="text-box">
-            <div class="wrapper-power">
-                <div class="power-title">
-                    <span data-pid="special">
-                        ESPECIAL
-                    </span>
-                </div>
-                <div class="power-desc">
-                    <span>
-                        Se essa carta é posta virada para cima na sua pilha de descartes, embaralhe-a no baralho.
-                    </span>
-                </div>
-            </div>
-            <div class="wrapper-deploy">
-                <div class="deploy-title">
-                    <span>
-                        BAIXAR
-                    </span>
-                </div>
-                <div class="deploy-desc">
-                    <span>
-                        Troque essa carta com a carta do topo do baralho, então embaralhe-o.
-                    </span>
-                </div>
-            </div>
-        </div>
-    </div>
     <div class="card red-card">
         <div class="card-top">
             <div class="card-title">ASSASSINA</div>
@@ -220,7 +182,44 @@
             </div>
         </div>
     </div>
-
+    <div class="card green-card">
+        <div class="card-top">
+            <div class="card-title">ESPIÃO</div>
+            <div class="card-subtitle">Loid Forger</div>
+            <div class="card-x">
+                <div><span class="cross">+</span></div>
+            </div>
+        </div>
+        <div class="art">
+            <img src="loid-art.png" style="object-position: 1rem 1.6rem; width: 14rem;">
+        </div>
+        <div class="text-box">
+            <div class="wrapper-power">
+                <div class="power-title">
+                    <span data-pid="special">
+                        ESPECIAL
+                    </span>
+                </div>
+                <div class="power-desc">
+                    <span>
+                        Se essa carta é posta virada para cima na sua pilha de descartes, embaralhe-a no baralho.
+                    </span>
+                </div>
+            </div>
+            <div class="wrapper-deploy">
+                <div class="deploy-title">
+                    <span>
+                        BAIXAR
+                    </span>
+                </div>
+                <div class="deploy-desc">
+                    <span>
+                        Troque essa carta com a carta do topo do baralho, então embaralhe-o.
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="card red-card" data-cid="sp">
         <div class="card-top">
             <div class="card-title" style="text-align: left">POLÍCIA <br> SECRETA</div>
@@ -264,7 +263,6 @@
             </div>
         </div>
     </div>
-
     <div class="card blue-card">
         <div class="card-top">
             <div class="card-title">AGENTE</div>
@@ -306,7 +304,6 @@
             </div>
         </div>
     </div>
-
     <div class="card blue-card">
         <div class="card-top">
             <div class="card-title">HANDLER</div>
@@ -348,13 +345,13 @@
             </div>
         </div>
     </div>
-
-    <img src="cut-telepath.png" alt="" srcset="">
-    <img src="cut-potato.png" alt="" srcset="">
-    <img src="cut-adulta.png" alt="" srcset="">
-
-
-
 </body>
+<script>
+    const cards = Array.from(document.body.querySelectorAll('.card'));
+    cards.forEach( card => {
+        const cloneCount = card.querySelector('.card-x').children.length - 1;
+        Array(cloneCount).fill(true).forEach( _ => card.insertAdjacentElement('afterend', card.cloneNode(true)));
+    })
+</script>
 
 </html>

@@ -49,16 +49,18 @@ body>img {
 }
 
 body>.card:nth-child(9n) {
-   break-after: page;
+    break-after: page;
 }
 
-.card:nth-child(3n-1){
+.card:nth-child(3n-1) {
     margin-right: 0.5cm;
     margin-left: 0.5cm;
 }
 
-.card:is(:nth-child(9n+7),:nth-child(9n+8),:nth-child(9n+9),){
-   margin-bottom: 0;
+@media print {
+    .card:is(:nth-child(9n+7), :nth-child(9n+8), :nth-child(9n+9), ) {
+        margin-bottom: 0;
+    }
 }
 
 /* @media print { */
@@ -66,7 +68,7 @@ body>.card:nth-child(9n) {
 @page {
     margin: 0cm;
     margin-top: 1cm;
-    margin-bottom: 1cm; 
+    margin-bottom: 1cm;
     size: a4 portrait;
 }
 
@@ -397,6 +399,6 @@ body>img {
 
 @media not print {
     body {
-      padding-top: 1cm;
+        padding-top: 1cm;
     }
 }
