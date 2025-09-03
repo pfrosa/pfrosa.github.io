@@ -10,7 +10,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
-        href="https://fonts.googleapis.com/css2?family=League+Gothic&family=Roboto:ital,wdth,wght@0,75,100..900;1,75,100..900&display=swap"
+        href="https://fonts.googleapis.com/css2?family=League+Gothic&family=Roboto:ital,wdth,wght@0,75,100..900;1,75,100..900&family=Source+Code+Pro:ital,wght@0,200..900;1,200..900&display=swap"
         rel="stylesheet">
 
     <title>Spy - Family translation</title>
@@ -34,8 +34,8 @@
         </div>
         <div class="text-box">
             <div class="wrapper-power">
-                <div class="power-title">
-                    <span style="letter-spacing: 0.06125rem; font-size: 93%;">
+                <div data-pid="aux" class="power-title">
+                    <span>
                         AUXILIAR
                     </span>
                 </div>
@@ -47,7 +47,7 @@
             </div>
             <div class="wrapper-deploy">
                 <div class="deploy-title">
-                    <span style="font-size: 90%;">
+                    <span>
                         BAIXAR
                     </span>
                 </div>
@@ -73,7 +73,7 @@
         <div class="text-box">
             <div class="wrapper-power">
                 <div class="power-title">
-                    <span style="letter-spacing: 0.06125rem; font-size: 93%;">
+                    <span data-pid="special">
                         ESPECIAL
                     </span>
                 </div>
@@ -85,7 +85,7 @@
             </div>
             <div class="wrapper-deploy">
                 <div class="deploy-title">
-                    <span style="font-size: 90%;">
+                    <span>
                         BAIXAR
                     </span>
                 </div>
@@ -104,7 +104,7 @@
             <div class="card-x">
                 <div><span class="cross">+</span></div>
                 <div><span class="cross">+</span></div>
-                <div style="color: #b04647"><span class="cross">+</span>5</div>
+                <div style="color: #822a2c"><span class="cross">+</span><b>5</b></div>
             </div>
         </div>
         <div class="art">
@@ -113,8 +113,8 @@
         </div>
         <div class="text-box">
             <div class="wrapper-power">
-                <div class="power-title">
-                    <span style="font-size: 90%;">
+                <div class="power-title" style="letter-spacing: 0.15mm;">
+                    <span>
                         SEGREDO
                     </span>
                 </div>
@@ -127,7 +127,7 @@
             </div>
             <div class="wrapper-deploy">
                 <div class="deploy-title">
-                    <span style="font-size: 90%;">
+                    <span>
                         BAIXAR
                     </span>
                 </div>
@@ -139,7 +139,7 @@
             </div>
         </div>
     </div>
-    <div class="card green-card">
+    <div class="card green-card" data-cid="info">
         <div class="card-top">
             <div class="card-title">INFORMANTE</div>
             <div class="card-subtitle">Franky Franklin</div>
@@ -155,8 +155,8 @@
         </div>
         <div class="text-box">
             <div class="wrapper-power">
-                <div class="power-title">
-                    <span style="font-size: 90%;">
+                <div data-pid="aux" class="power-title">
+                    <span>
                         AUXILIAR
                     </span>
                 </div>
@@ -168,12 +168,12 @@
             </div>
             <div class="wrapper-deploy">
                 <div class="deploy-title">
-                    <span style="font-size: 90%;">
+                    <span>
                         BAIXAR
                     </span>
                 </div>
                 <div class="deploy-desc">
-                    <span style="font-size: 83%;">
+                    <span>
                         Compre a carta do topo do baralho, então coloque uma carta de sua mão no topo do baralho.
                     </span>
                 </div>
@@ -195,8 +195,8 @@
         </div>
         <div class="text-box">
             <div class="wrapper-power">
-                <div class="power-title">
-                    <span style="font-size: 90%;">
+                <div data-pid="aux" class="power-title">
+                    <span>
                         AUXILIAR
                     </span>
                 </div>
@@ -208,7 +208,7 @@
             </div>
             <div class="wrapper-deploy">
                 <div class="deploy-title">
-                    <span style="font-size: 90%;">
+                    <span>
                         BAIXAR
                     </span>
                 </div>
@@ -221,9 +221,9 @@
         </div>
     </div>
 
-    <div class="card red-card">
+    <div class="card red-card" data-cid="sp">
         <div class="card-top">
-            <div class="card-title" style="text-align: left; line-height: 120%;">POLÍCIA <br> SECRETA</div>
+            <div class="card-title" style="text-align: left">POLÍCIA <br> SECRETA</div>
             <div class="card-subtitle">Yuri Briar</div>
             <div class="card-x">
                 <div><span class="cross">+</span></div>
@@ -238,8 +238,8 @@
         </div>
         <div class="text-box">
             <div class="wrapper-power">
-                <div class="power-title">
-                    <span style="font-size: 90%;">
+                <div data-pid="aux" class="power-title">
+                    <span>
                         AUXILIAR
                     </span>
                 </div>
@@ -252,7 +252,7 @@
             </div>
             <div class="wrapper-deploy">
                 <div class="deploy-title">
-                    <span style="font-size: 90%;">
+                    <span>
                         BAIXAR
                     </span>
                 </div>
@@ -280,20 +280,21 @@
         </div>
         <div class="text-box">
             <div class="wrapper-power">
-                <div class="power-title">
-                    <span style="font-size: 90%;">
+                <div data-pid="aux" class="power-title">
+                    <span>
                         AUXILIAR
                     </span>
                 </div>
                 <div class="power-desc">
                     <span>
-                        Compre uma carta e escolha outro jogador, Ele descarta sua mão, entao aleatoriamente pega uma carta da sua mão.
+                        Compre uma carta e escolha outro jogador, Ele descarta sua mão, entao aleatoriamente pega uma
+                        carta da sua mão.
                     </span>
                 </div>
             </div>
             <div class="wrapper-deploy">
                 <div class="deploy-title">
-                    <span style="font-size: 90%;">
+                    <span>
                         BAIXAR
                     </span>
                 </div>
@@ -321,8 +322,8 @@
         </div>
         <div class="text-box">
             <div class="wrapper-power">
-                <div class="power-title">
-                    <span style="font-size: 90%;">
+                <div data-pid="aux" class="power-title">
+                    <span>
                         AUXILIAR
                     </span>
                 </div>
@@ -334,13 +335,14 @@
             </div>
             <div class="wrapper-deploy">
                 <div class="deploy-title">
-                    <span style="font-size: 90%;">
+                    <span>
                         BAIXAR
                     </span>
                 </div>
                 <div class="deploy-desc">
-                    <span style="font-size: 90%; line-height: 150%;">
-                        Embaralhe qualquer 1 carta descartada no baralho, então escolha um jogador para trocar sua mão com a carta do topo do baralho.
+                    <span style="line-height: 150%;">
+                        Embaralhe qualquer 1 carta descartada no baralho, então escolha um jogador para trocar sua mão
+                        com a carta do topo do baralho.
                     </span>
                 </div>
             </div>
