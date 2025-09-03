@@ -33,9 +33,9 @@ content:
         type: string
         description: Will be provused for any page with no description.
       - name: url
-        label: https://www.pfrosa.com.br
+        label: Website url
         type: string
-        # pattern: ^(https?:\/\/)?(www\.)?[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}(\/[^\s]*)?$
+        pattern: ^(https?:\/\/)?(www\.)?[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}(\/[^\s]*)?$
       # - name: cover
       #   label: Preview image
       #   type: image
