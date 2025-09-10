@@ -5,9 +5,15 @@
     background-color: black;
  }
 
+ button {
+    font-family: monospace;
+    position: fixed;
+ }
+
  .map {
      /* --hex-size: 8.2vmin; */
      --hex-size: calc(100vmin / 15);
+     /* --hex-size: 34px; */
      box-sizing: border-box;
      margin: 0px;
      --margin: 2px;

@@ -11,21 +11,35 @@
 </head>
 
 <body>
+    <button id="regen"> re-generate </button>
     <main class="map">
 
     </main>
 </body>
 
 <script>
-    const seed = Math.random();
-    Math.seedrandom(seed);
+    const SEED = Math.random();
+    Math.seedrandom(SEED);
     // Math.seedrandom(0.41342047817838035);
     const mapElement = document.body.querySelector('.map');
+    const reGen = document.body.querySelector('#regen');
+
+    const NUM_PLAYERS = 4;
     //8hex on middle
     const MAX_WIDTH = 8;
     const MIDDLEROWS = 15;
-    const NUM_PLAYERS = 4;
-    const SPREAD = 2; //more than 5 doens't generate;
+    const SPREAD = 2;
+
+    const colorsTest = ['olive', 'cyan', 'lightyellow', 'lightgreen']
+    const biomCount = {
+        [colorsTest[0]]: 0,
+        [colorsTest[1]]: 0,
+        [colorsTest[2]]: 0,
+        [colorsTest[3]]: 0,
+    };
+    // const MAX_WIDTH = 12;
+    // const MIDDLEROWS = 17;
+    // const SPREAD = 4; //more than 5 doens't generate;
 
     // @TODO get diff solution to this, a map solve it;
     let flatIndex = 0;
@@ -68,6 +82,76 @@
     }
 
     const generateView = (showNormalized = false) => {
+        const randomHex = [
+        ];
+        biomCount[colorsTest[0]] = 0;
+        biomCount[colorsTest[1]] = 0;
+        biomCount[colorsTest[2]] = 0;
+        biomCount[colorsTest[3]] = 0;
+        flatHexes.forEach(hex => hex.bgColor = false)
+
+        Array(NUM_PLAYERS).fill(true).forEach(_ => {
+            const borders = getNeighborHexesV3({ row: 14, pos: 3 }, 7, true);
+            let randomNumber = getRandomInt(flatHexes.length);
+            let neighbors = getSpreadV3(flatHexes[randomNumber], SPREAD + 3)
+            let neighborsIndex = neighbors.map(n => n.flatIndex);
+            //avoiding borders on startgin bioms
+            const borderFlatIndex = borders.map(border => {
+                // rows[border.row][border.pos].bgColor ="orange"
+                return rows[border.row][border.pos].flatIndex;
+            });
+
+            while (borderFlatIndex.includes(randomNumber) || randomHex.includes(randomNumber) || neighborsIndex.some(i => randomHex.includes(i))) {
+                randomNumber = getRandomInt(flatHexes.length)
+                neighbors = getSpreadV3(flatHexes[randomNumber], SPREAD + 3)
+                neighborsIndex = neighbors.map(n => n.flatIndex);
+            }
+            randomHex.push(randomNumber);
+        })
+
+        //PAINT RANDOM HEX and spread
+        randomHex.forEach((hexPos, i) => {
+            const hex = flatHexes[hexPos];
+            spread(hex, i, true);
+            rows.at(hex.row)[hex.pos].bgColor = colorsTest[i];
+            // rows.at(hex.row)[hex.pos].opacity = 0.3;
+            rows.at(hex.row)[hex.pos].dist = 0;
+        })
+
+        randomHex.reverse().forEach((hexPos, i) => {
+            const hex = flatHexes[hexPos];
+            spread(hex, 3 - i);
+        })
+
+        randomHex.reverse().forEach((hexPos, i) => {
+            const hex = flatHexes[hexPos];
+            spread(hex, i);
+        })
+
+        while (flatHexes.some(hex => !hex.bgColor)) {
+            // break;
+            flatHexes.filter(hex => !hex.bgColor)
+                .forEach(hex => {
+                    const neighbors = getSpreadV3(hex, 1);
+                    const colorCount = neighbors.reduce((colors, n) => {
+                        if (n.bgColor) colors[n.bgColor] += 1;
+                        return colors;
+                    }, {
+                        [colorsTest[0]]: 0,
+                        [colorsTest[1]]: 0,
+                        [colorsTest[2]]: 0,
+                        [colorsTest[3]]: 0,
+                    });
+                    const majority = Object.keys(colorCount)
+                        .reduce((biggest, current) =>
+                            biggest = colorCount[current] > (colorCount[biggest] || 0) ? current : biggest, 0);
+
+                    if (majority) {
+                        hex.bgColor = majority;
+                    }
+                });
+        }
+
         if (showNormalized) {
             const allNormalizedHexes = flatHexes
                 .map(hex => {
@@ -78,10 +162,9 @@
         }
 
         const elementsOnMap = rows.map(createRow);
-
+        mapElement.innerHTML = '';
         mapElement.append(...elementsOnMap);
     }
-
 
     const getRandomInt = (max) => Math.floor(Math.random() * max);
 
@@ -173,7 +256,7 @@
                 .map(normalizePos)
                 .reduce((arr, hex) => {
                     if (!arr[hex.row]?.length) {
-                        arr[hex.row] = new Array(15).fill();
+                        arr[hex.row] = new Array(MAX_WIDTH * 2 - 1).fill();
                     }
                     arr[hex.row] = arr[hex.row].with(hex.column, hex);
                     return arr;
@@ -227,7 +310,7 @@
             .map(normalizePos)
             .reduce((arr, hex) => {
                 if (!arr[hex.row]?.length) {
-                    arr[hex.row] = new Array(15).fill();
+                    arr[hex.row] = new Array(MAX_WIDTH * 2 - 1).fill();
                 }
                 arr[hex.row] = arr[hex.row].with(hex.column, hex);
                 return arr;
@@ -298,39 +381,6 @@
             .flat()
     }
 
-    //pick random hexes
-    const randomHex = [
-    ];
-    // get at least 2 dist, not in the imediate neighbors
-
-    Array(NUM_PLAYERS).fill(true).forEach(_ => {
-        const borders = getNeighborHexesV3({ row: 14, pos: 3 }, 7, true);
-        let randomNumber = getRandomInt(flatHexes.length);
-        let neighbors = getSpreadV3(flatHexes[randomNumber], SPREAD + 3)
-        let neighborsIndex = neighbors.map(n => n.flatIndex);
-        //avoiding borders on startgin bioms
-        const borderFlatIndex = borders.map(border => {
-            // rows[border.row][border.pos].bgColor ="orange"
-            return rows[border.row][border.pos].flatIndex;
-        });
-
-        while (borderFlatIndex.includes(randomNumber) || randomHex.includes(randomNumber) || neighborsIndex.some(i => randomHex.includes(i))) {
-            randomNumber = getRandomInt(flatHexes.length)
-            neighbors = getSpreadV3(flatHexes[randomNumber], SPREAD + 3)
-            neighborsIndex = neighbors.map(n => n.flatIndex);
-        }
-        randomHex.push(randomNumber);
-    })
-
-
-    const colorsTest = ['olive', 'cyan', 'lightyellow', 'lightgreen']
-    const biomCount = {
-        [colorsTest[0]]: 0,
-        [colorsTest[1]]: 0,
-        [colorsTest[2]]: 0,
-        [colorsTest[3]]: 0,
-    };
-
     const spread = (hex, i, inplace = false) => {
         const spreadDistN = getNeighborHexesV3(hex, SPREAD, true);
         const randomCenterHex = spreadDistN[getRandomInt(spreadDistN.length)];
@@ -345,65 +395,12 @@
         })
         // rows.at(randomCenterHex.row)[randomCenterHex.pos].opacity = 0.3;
     }
-    //PAINT RANDOM HEX and spread
-    randomHex.forEach((hexPos, i) => {
-        const hex = flatHexes[hexPos];
-        spread(hex, i, true);
-        rows.at(hex.row)[hex.pos].bgColor = colorsTest[i];
-        // rows.at(hex.row)[hex.pos].opacity = 0.3;
-        rows.at(hex.row)[hex.pos].dist = 0;
-    })
-
-
-
-    randomHex.reverse().forEach((hexPos, i) => {
-       const hex = flatHexes[hexPos];
-       spread(hex, 3-i);
-    })
-
-     randomHex.reverse().forEach((hexPos, i) => {
-       const hex = flatHexes[hexPos];
-       spread(hex, i);
-    })
-
-    const smallest = Object.keys(biomCount)
-        .reduce((lowest, current) =>
-            lowest = biomCount[current] < (biomCount[lowest] || Infinity) ? current : lowest, false)
-
-    //fillAll with smallest;
-
-    //remove isolated
-
-    //can also do some calculations based on neightbors;
-
-    //multiple passes, get neightbor majority, and use it to do the color
-
-    while (flatHexes.some(hex => !hex.bgColor)) {
-        // break;
-        flatHexes.filter(hex => !hex.bgColor)
-            .forEach(hex => {
-                const neighbors = getSpreadV3(hex, 1);
-                const colorCount = neighbors.reduce((colors, n) => {
-                    if (n.bgColor) colors[n.bgColor] += 1;
-                    return colors;
-                }, {
-                    [colorsTest[0]]: 0,
-                    [colorsTest[1]]: 0,
-                    [colorsTest[2]]: 0,
-                    [colorsTest[3]]: 0,
-                });
-                const majority = Object.keys(colorCount)
-                    .reduce((biggest, current) =>
-                        biggest = colorCount[current] > (colorCount[biggest] || 0) ? current : biggest, 0);
-
-                if (majority) {
-                    hex.bgColor = majority;
-                }
-            });
-    }
+    //pick random hexes
 
     //multiple spreades on biom maybe better;
     generateView(false);
+
+    reGen.addEventListener('click', generateView);
 
 </script>
 
