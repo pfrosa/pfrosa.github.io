@@ -1,0 +1,62 @@
+ body {
+     padding: 0px;
+     display: flex;
+     justify-content: center;
+    background-color: black;
+ }
+
+ .map {
+     /* --hex-size: 8.2vmin; */
+     --hex-size: calc(100vmin / 15);
+     box-sizing: border-box;
+     margin: 0px;
+     --margin: 2px;
+     --pad: 20px;
+     padding: calc(var(--pad) * 1.5) calc(var(--pad)/cos(30deg));
+     background-color: black;
+ }
+
+ .row {
+     display: flex;
+     width: 100%;
+     justify-content: center;
+     align-items: center;
+     /* gap of 1 hexagon, that fits row above */
+     gap: calc(var(--hex-size)/2 + var(--margin)*2);
+ }
+
+ .row:not(:first-child) {
+     /* margin-top: -18%; */
+     margin-top: calc((var(--hex-size)/ cos(30deg)) / -2 + var(--margin));
+ }
+
+ /* fix browser inperfections for 100px, need to change for more precision */
+ .row:nth-child(2) {
+     margin-top: calc((var(--hex-size)/ cos(30deg)) / -2 + var(--margin) - 0.1px);
+ }
+
+ .hex {
+    /* uncoment for debug */
+     color: transparent;
+     text-align: center;
+     width: var(--hex-size);
+     height: calc(var(--hex-size)/cos(30deg));
+     background: darkgrey;
+     /* filter: drop-shadow(1px 1px red); */
+     transform-origin: center;
+     flex-shrink: 0;
+
+     /* Ponty side up */
+     clip-path: polygon(-50% 50%,
+             50% 100%,
+             150% 50%,
+             50% 0);
+
+     /* inverted x and y */
+     clip-path: polygon(50% -50%, 100% 50%, 50% 150%, 0% 50%);
+ }
+
+ .hex::before {
+    content: attr(data-dist);
+    display: block;
+ }

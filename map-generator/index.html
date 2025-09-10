@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name='og:image' content='http://pfrosa.github.io/project-thumbnails/map-generator.png'>
+    <title>Map Generator</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <main class="map">
+
+    </main>
+</body>
+
+<script>
+    const mapElement = document.body.querySelector('.map');
+    //8hex on middle
+    const MAX_WIDTH = 8;
+    const MIDDLEROWS = 15;
+    const NUM_PLAYERS = 4;
+    const SPREAD = 2; //more than 5 doens't generate;
+
+    // @TODO get diff solution to this, a map solve it;
+    let flatIndex = 0;
+    const createHexObject = (row, pos) => ({
+        row,
+        pos,
+        bgColor: false,
+        opacity: 1,
+        flatIndex: flatIndex++,
+        text: `${row}-${pos}`,
+    });
+
+    //create actual arrays to have the objects on each hex having its pos, and more info
+    const rows = [
+        ...Array(MAX_WIDTH - 1).fill(true).map((_, i) => Array(i + 1).fill(i).map(createHexObject)),
+        ...Array(MIDDLEROWS).fill(true).map((_, i) => Array(MAX_WIDTH - i % 2).fill(i + MAX_WIDTH - 1).map(createHexObject)),
+        ...Array(MAX_WIDTH - 1).fill(true).map((_, i) => Array(MAX_WIDTH - (i + 1)).fill(i + MIDDLEROWS + MAX_WIDTH - 1).map(createHexObject)),
+    ];
+
+    const flatHexes = rows.flat();
+
+    const createHex = (content = {}) => {
+        const hexElement = document.createElement('div');
+        hexElement.style.backgroundColor = content.bgColor;
+        hexElement.style.opacity = content.opacity;
+        hexElement.dataset.dist = content.dist || 0;
+
+        hexElement.innerText = content.text;
+        hexElement.classList.add('hex');
+        hexElement.addEventListener('click', () => hexElement.style.opacity = 1);
+        content.htmlElement = hexElement;
+        return hexElement;
+    }
+
+    const createRow = (row) => {
+        const rowElement = document.createElement('div');
+        rowElement.append(...row.map(createHex))
+        rowElement.classList.add('row');
+        return rowElement;
+    }
+
+    const generateView = (showNormalized = false) => {
+        if (showNormalized) {
+            const allNormalizedHexes = flatHexes
+                .map(hex => {
+                    const newHex = normalizePos(hex);
+                    hex.text = `${newHex.row}-${newHex.column}`;
+                    return newHex;
+                })
+        }
+
+        const elementsOnMap = rows.map(createRow);
+
+        mapElement.append(...elementsOnMap);
+    }
+
+
+    const getRandomInt = (max) => Math.floor(Math.random() * max);
+
+    const getNeighborHexes = (hex = { row: 0, pos: 0 }) => {
+
+
+        const minus = (num, minus = 1) => num - minus;
+        const rowSizeIsBiggerUp = rows[hex.row]?.length > rows[minus(hex.row)]?.length;
+        const rowSizeIsBiggerDown = rows[hex.row]?.length > rows[hex.row + 1]?.length;
+        const rowDiffAbove = rows[minus(hex.row, 2)]?.length - rows[hex.row]?.length;
+        const rowAboveDiffSize = rowDiffAbove !== 0;
+        const rowDiffBelow = rows[hex.row + 2]?.length - rows[hex.row]?.length;
+        const rowBellowDiffSize = rowDiffBelow !== 0;
+        const getBeforePosUp = () => rowSizeIsBiggerUp ? minus(hex.pos) : hex.pos;
+        const getBeforePosDown = () => rowSizeIsBiggerDown ? minus(hex.pos) : hex.pos;
+
+
+        const neighborLeftUpPos = { row: minus(hex.row), pos: getBeforePosUp() }
+        const neighborUpPos = { row: minus(hex.row, 2), pos: rowAboveDiffSize ? minus(hex.pos, rowDiffAbove > 0 ? -1 : 1) : hex.pos }
+        const neighborRightUpPos = { row: minus(hex.row), pos: getBeforePosUp() + 1 }
+
+        const neighborLeftDownPos = { row: hex.row + 1, pos: getBeforePosDown() }
+        const neighborDownPos = { row: hex.row + 2, pos: rowBellowDiffSize ? minus(hex.pos, rowDiffBelow > 0 ? -1 : 1) : hex.pos }
+        const neighborRightDownPos = { row: hex.row + 1, pos: getBeforePosDown() + 1 }
+
+        return [
+            rows[neighborLeftUpPos.row]?.[neighborLeftUpPos.pos] || false,
+            rows[neighborUpPos.row]?.[neighborUpPos.pos] || false,
+            rows[neighborRightUpPos.row]?.[neighborRightUpPos.pos] || false,
+            rows[neighborLeftDownPos.row]?.[neighborLeftDownPos.pos] || false,
+            rows[neighborDownPos.row]?.[neighborDownPos.pos] || false,
+            rows[neighborRightDownPos.row]?.[neighborRightDownPos.pos] || false,
+        ].filter(_ => _)
+    }
+
+    const normalizePos = hex => {
+        const distFromEdge = hex.row > (MIDDLEROWS + MAX_WIDTH - 3) ?
+            hex.row - (MIDDLEROWS + MAX_WIDTH - 3) : MAX_WIDTH - hex.row
+        return {
+            row: hex.row,
+            rowPair: hex.row + (hex.row % 2 !== 0 ? 1 : 0),
+            pos: hex.pos,
+            column: (distFromEdge > 0 ? distFromEdge - 1 : 1) + hex.pos * 2 + (distFromEdge < 1 && hex.row % 2 != 0 ? -1 : 0),
+        }
+    };
+
+    const getNeighborHexesV2 = (hex = { row: 0, pos: 0 }, distance = 1) => {
+        //normalize pos?
+        //      const MAX_WIDTH = 8;
+        // const MIDDLEROWS = 15;
+
+        // -90 -2 0
+        // -30 -1 +1
+        // +30 +1 +1
+        // +90 +2 0
+        // +150 +1 -1
+        // 
+
+
+
+
+        const shouldGet = 6 * distance;
+        const angleOfEach = (Math.PI * 2) / shouldGet;
+        const angleOffset = distance % 2 != 0 ? (Math.PI / 6) : 0;// 30 deg.
+
+        const distanceVectors = Array(shouldGet).fill(true).map((_, i) => {
+            const vecAngleRad = i * angleOfEach + angleOffset;
+            //Magnitude
+            const mag = 1.4;
+            const x = Number(Math.cos(vecAngleRad).toFixed(2)) * mag;
+            const y = Number(Math.sin(vecAngleRad).toFixed(2)) * mag;
+
+            const vecAngle = Math.round(Math.atan2(y, x) * (180 / Math.PI));
+            const signAngle = vecAngle < 0 ? -1 : 1;
+            //1,3,5
+            const sin = Math.sin(vecAngleRad);
+            const cos = Math.cos(vecAngleRad);
+            const cosR = Math.round(Math.cos(vecAngleRad).toFixed(2));
+            const sinR = Math.round(Math.sin(vecAngleRad));
+
+            const rowDiff = Math.abs(vecAngle) == 90 ? distance * signAngle : 0;
+            const posDiff = 0;
+
+
+            //const normalizeNumberToHalfs = num => (num - Math.trunc(num)) 
+            // Provavel que se eu printasse como uma matriz esparça eu teria menos problemas; é só escluir nos vizinhos o numero correto deles e cabou;
+            const normalizedHex = normalizePos(hex);
+            const allNormalizedHexes = flatHexes
+                .map(normalizePos)
+                .reduce((arr, hex) => {
+                    if (!arr[hex.row]?.length) {
+                        arr[hex.row] = new Array(15).fill();
+                    }
+                    arr[hex.row] = arr[hex.row].with(hex.column, hex);
+                    return arr;
+                }, []);
+
+            const normalizedRow = rowDiff + normalizedHex.row + Math.round(y.toFixed(2)) * distance;
+            const normalizeColumn = normalizedHex.column + Math.round(x.toFixed(2)) * distance;
+            const actualHex = allNormalizedHexes[normalizedRow]?.[normalizeColumn];
+
+            return {
+                vecAngle,
+                x,
+                y,
+                // rowDiff,
+                sinR,
+                cosR,
+                normalizedRow,
+                normalizeColumn,
+                row: actualHex?.row || 0,
+                pos: actualHex?.pos || 0,
+            }
+        });
+        return distanceVectors.filter(_ => _);
+    }
+
+    const getNeighborHexesV3 = (hex = { row: 0, pos: 0 }, distance = 1, borderOnly = false) => {
+        //center is the 1 
+        const normalizedHex = normalizePos(hex);
+        const columns = 1 + distance * 2;
+        const offsetsColumns = Array(columns).fill(true).map((_, i) => i - Math.floor(columns / 2))
+        const offsetsRows = offsetsColumns
+            .map((offset, i) =>
+                Array(offsetsColumns.length - Math.abs(i - Math.floor(offsetsColumns.length / 2)))
+                    .fill(true)
+                    .map((_, i, x) =>
+                        (
+                            (i - Math.floor(x.length / 2))
+                            + (x.length % 2 == 0 && i >= x.length / 2 ? 1 : 0)
+                        ) * -2 + (x.length % 2 == 0 ? i >= x.length / 2 ? +1 : -1 : 0)));
+
+        if (borderOnly) {
+            offsetsRows.forEach( (_,i,a) => _.forEach((_,j,b) => {
+                if(i>0 && j>0 && i < a.length-1 && j< b.length-1) {
+                    offsetsRows[i][j]= Infinity;
+                }
+            }))
+        }
+
+
+        const allNormalizedHexes = flatHexes
+            .map(normalizePos)
+            .reduce((arr, hex) => {
+                if (!arr[hex.row]?.length) {
+                    arr[hex.row] = new Array(15).fill();
+                }
+                arr[hex.row] = arr[hex.row].with(hex.column, hex);
+                return arr;
+            }, []);
+
+
+        const hexes = offsetsColumns.map((oc, i) => {
+            return offsetsRows[i].map(or => {
+                const offsetObjectNormalized = {
+                    oc,
+                    or,
+                    _row: normalizedHex.row + or,
+                    _pos: normalizedHex.column + oc,
+                };
+                const actualHex = allNormalizedHexes[offsetObjectNormalized._row]?.[offsetObjectNormalized._pos];
+                return actualHex;
+            })
+        });
+
+        return hexes.flat().filter(_ => _);
+    }
+
+    const getSpread = (hex, depth = 1, setDepth = false, nSet = new Set()) => {
+        if (depth == 0) return Array.from(nSet);
+        else {
+            getNeighborHexes(hex).map(hex => {
+                if (setDepth) {
+                    hex.depth = !hex.depth || depth > hex.depth ? depth : hex.depth;
+                }
+                nSet.add(hex);
+                return getSpread(hex, depth - 1, setDepth, nSet)
+            }).flat();
+            return Array.from(nSet);
+        }
+    }
+
+    const getSpreadV2 = (hex, depth = 1, setDepth = false) => {
+        return Array(depth)
+            .fill(true)
+            .map((_, i) => getNeighborHexesV2(hex, i + 1))
+            .map((ditanceObjs, i) =>
+                ditanceObjs.map(distanceObj => {
+                    const { row, pos } = distanceObj;
+                    const hex = rows[row]?.[pos];
+                    if (setDepth && hex) {
+                        hex.depth = i + 1;
+                    };
+                    return hex;
+                })
+            )
+            .flat()
+    }
+
+    const getSpreadV3 = (hex, depth = 1, setDepth = false) => {
+        return Array(depth)
+            .fill(true)
+            .map((_, i) => getNeighborHexesV3(hex, i + 1, i>0))
+            .map((ditanceObjs, i) =>
+                ditanceObjs.map(distanceObj => {
+                    const { row, pos } = distanceObj;
+                    const hex = rows[row]?.[pos];
+                    if (setDepth && hex && !hex.depth) {
+                        hex.depth = i + 1;
+                    };
+                    return hex;
+                })
+            )
+            .flat()
+    }
+
+    //pick random hexes
+    const randomHex = [
+    ];
+    // get at least 2 dist, not in the imediate neighbors
+
+    Array(NUM_PLAYERS).fill(true).forEach(_ => {
+        const borders = getNeighborHexesV3({ row: 14, pos: 3 }, 7, true);
+        let randomNumber = getRandomInt(flatHexes.length);
+        let neighbors = getSpreadV3(flatHexes[randomNumber], SPREAD + 3)
+        let neighborsIndex = neighbors.map(n => n.flatIndex);
+        //avoiding borders on startgin bioms
+        const borderFlatIndex = borders.map( border => {
+            // rows[border.row][border.pos].bgColor ="orange"
+            return   rows[border.row][border.pos].flatIndex;
+        });
+     
+        while (borderFlatIndex.includes(randomNumber) || randomHex.includes(randomNumber) || neighborsIndex.some(i => randomHex.includes(i))) {
+            randomNumber = getRandomInt(flatHexes.length)
+            neighbors = getSpreadV3(flatHexes[randomNumber], SPREAD + 3)
+            neighborsIndex = neighbors.map(n => n.flatIndex);
+        }
+        randomHex.push(randomNumber);
+    })
+
+
+    const colorsTest = ['olive', 'cyan', 'lightyellow', 'lightgreen']
+    const biomCount = {
+        [colorsTest[0]]: 0,
+        [colorsTest[1]]: 0,
+        [colorsTest[2]]: 0,
+        [colorsTest[3]]: 0,
+    };
+
+    //PAINT RANDOM HEX and spread
+    randomHex.forEach((hexPos, i) => {
+        const hex = flatHexes[hexPos];
+        const spread_1 = getSpreadV3(hex, SPREAD, true);
+        const spreadDistN = getNeighborHexesV3(hex, SPREAD * 2, true);
+        const spread_2 = getSpreadV3(spreadDistN[getRandomInt(spreadDistN.length)], SPREAD, true);
+        const spread_3 = getSpreadV3(spreadDistN[getRandomInt(spreadDistN.length)], SPREAD, true);
+        // 
+        [...spread_1, ...spread_2, ...spread_3].forEach(neighbor => {
+            biomCount[colorsTest[i]]++;
+            if (!neighbor.bgColor) {
+                neighbor.bgColor = colorsTest[i];
+                // neighbor.opacity = 0.7;
+                neighbor.dist = neighbor.depth;
+            }
+        });
+        rows.at(hex.row)[hex.pos].bgColor = colorsTest[i];
+        rows.at(hex.row)[hex.pos].opacity = 0.99;
+        rows.at(hex.row)[hex.pos].dist = 0;
+    })
+
+    const smallest = Object.keys(biomCount)
+        .reduce((lowest, current) =>
+            lowest = biomCount[current] < (biomCount[lowest] || Infinity) ? current : lowest, false)
+
+    //fillAll with smallest;
+
+    //can also do some calculations based on neightbors;
+
+    flatHexes.filter(hex => !hex.bgColor).forEach(hex => hex.bgColor = smallest);
+
+    //multiple spreades on biom maybe better;
+    generateView(false);
+
+</script>
+
+</html>
