@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/seedrandom/3.0.5/seedrandom.min.js"></script>
     <meta name='og:image' content='http://pfrosa.github.io/project-thumbnails/map-generator.png'>
     <title>Map Generator</title>
     <link rel="stylesheet" href="style.css">
@@ -16,6 +17,9 @@
 </body>
 
 <script>
+    const seed = Math.random();
+    Math.seedrandom(seed);
+    // Math.seedrandom(0.41342047817838035);
     const mapElement = document.body.querySelector('.map');
     //8hex on middle
     const MAX_WIDTH = 8;
@@ -211,9 +215,9 @@
                         ) * -2 + (x.length % 2 == 0 ? i >= x.length / 2 ? +1 : -1 : 0)));
 
         if (borderOnly) {
-            offsetsRows.forEach( (_,i,a) => _.forEach((_,j,b) => {
-                if(i>0 && j>0 && i < a.length-1 && j< b.length-1) {
-                    offsetsRows[i][j]= Infinity;
+            offsetsRows.forEach((_, i, a) => _.forEach((_, j, b) => {
+                if (i > 0 && j > 0 && i < a.length - 1 && j < b.length - 1) {
+                    offsetsRows[i][j] = Infinity;
                 }
             }))
         }
@@ -280,7 +284,7 @@
     const getSpreadV3 = (hex, depth = 1, setDepth = false) => {
         return Array(depth)
             .fill(true)
-            .map((_, i) => getNeighborHexesV3(hex, i + 1, i>0))
+            .map((_, i) => getNeighborHexesV3(hex, i + 1, i > 0))
             .map((ditanceObjs, i) =>
                 ditanceObjs.map(distanceObj => {
                     const { row, pos } = distanceObj;
@@ -305,11 +309,11 @@
         let neighbors = getSpreadV3(flatHexes[randomNumber], SPREAD + 3)
         let neighborsIndex = neighbors.map(n => n.flatIndex);
         //avoiding borders on startgin bioms
-        const borderFlatIndex = borders.map( border => {
+        const borderFlatIndex = borders.map(border => {
             // rows[border.row][border.pos].bgColor ="orange"
-            return   rows[border.row][border.pos].flatIndex;
+            return rows[border.row][border.pos].flatIndex;
         });
-     
+
         while (borderFlatIndex.includes(randomNumber) || randomHex.includes(randomNumber) || neighborsIndex.some(i => randomHex.includes(i))) {
             randomNumber = getRandomInt(flatHexes.length)
             neighbors = getSpreadV3(flatHexes[randomNumber], SPREAD + 3)
@@ -327,25 +331,39 @@
         [colorsTest[3]]: 0,
     };
 
-    //PAINT RANDOM HEX and spread
-    randomHex.forEach((hexPos, i) => {
-        const hex = flatHexes[hexPos];
-        const spread_1 = getSpreadV3(hex, SPREAD, true);
-        const spreadDistN = getNeighborHexesV3(hex, SPREAD * 2, true);
-        const spread_2 = getSpreadV3(spreadDistN[getRandomInt(spreadDistN.length)], SPREAD, true);
-        const spread_3 = getSpreadV3(spreadDistN[getRandomInt(spreadDistN.length)], SPREAD, true);
-        // 
-        [...spread_1, ...spread_2, ...spread_3].forEach(neighbor => {
+    const spread = (hex, i, inplace = false) => {
+        const spreadDistN = getNeighborHexesV3(hex, SPREAD, true);
+        const randomCenterHex = spreadDistN[getRandomInt(spreadDistN.length)];
+        const spread = getSpreadV3(inplace ? hex : randomCenterHex, SPREAD, true);
+        spread.forEach(neighbor => {
             biomCount[colorsTest[i]]++;
             if (!neighbor.bgColor) {
                 neighbor.bgColor = colorsTest[i];
                 // neighbor.opacity = 0.7;
                 neighbor.dist = neighbor.depth;
             }
-        });
+        })
+        // rows.at(randomCenterHex.row)[randomCenterHex.pos].opacity = 0.3;
+    }
+    //PAINT RANDOM HEX and spread
+    randomHex.forEach((hexPos, i) => {
+        const hex = flatHexes[hexPos];
+        spread(hex, i, true);
         rows.at(hex.row)[hex.pos].bgColor = colorsTest[i];
-        rows.at(hex.row)[hex.pos].opacity = 0.99;
+        // rows.at(hex.row)[hex.pos].opacity = 0.3;
         rows.at(hex.row)[hex.pos].dist = 0;
+    })
+
+
+
+    randomHex.reverse().forEach((hexPos, i) => {
+       const hex = flatHexes[hexPos];
+       spread(hex, 3-i);
+    })
+
+     randomHex.reverse().forEach((hexPos, i) => {
+       const hex = flatHexes[hexPos];
+       spread(hex, i);
     })
 
     const smallest = Object.keys(biomCount)
@@ -354,9 +372,35 @@
 
     //fillAll with smallest;
 
+    //remove isolated
+
     //can also do some calculations based on neightbors;
 
-    flatHexes.filter(hex => !hex.bgColor).forEach(hex => hex.bgColor = smallest);
+    //multiple passes, get neightbor majority, and use it to do the color
+
+    while (flatHexes.some(hex => !hex.bgColor)) {
+        // break;
+        flatHexes.filter(hex => !hex.bgColor)
+            .forEach(hex => {
+                const neighbors = getSpreadV3(hex, 1);
+                const colorCount = neighbors.reduce((colors, n) => {
+                    if (n.bgColor) colors[n.bgColor] += 1;
+                    return colors;
+                }, {
+                    [colorsTest[0]]: 0,
+                    [colorsTest[1]]: 0,
+                    [colorsTest[2]]: 0,
+                    [colorsTest[3]]: 0,
+                });
+                const majority = Object.keys(colorCount)
+                    .reduce((biggest, current) =>
+                        biggest = colorCount[current] > (colorCount[biggest] || 0) ? current : biggest, 0);
+
+                if (majority) {
+                    hex.bgColor = majority;
+                }
+            });
+    }
 
     //multiple spreades on biom maybe better;
     generateView(false);
