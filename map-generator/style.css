@@ -1,6 +1,7 @@
  body {
      padding: 0px;
      display: flex;
+     flex-direction: column;
      justify-content: center;
     background-color: black;
  }
@@ -9,11 +10,13 @@
     font-family: monospace;
     position: fixed;
     z-index: 1;
+    top: 20px;
+    left: 20px;
  }
 
  .map {
      /* --hex-size: 8.2vmin; */
-     --hex-size: calc(100vmin / 17);
+     --hex-size: calc(100vmin / 22);
      /* --hex-size: 34px; */
      box-sizing: border-box;
      margin: 0px;
