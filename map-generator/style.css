@@ -13,7 +13,7 @@
 
  .map {
      /* --hex-size: 8.2vmin; */
-     --hex-size: calc(100vmin / 15);
+     --hex-size: calc(100vmin / 17);
      /* --hex-size: 34px; */
      box-sizing: border-box;
      margin: 0px;

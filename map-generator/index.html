@@ -26,9 +26,9 @@
 
     const NUM_PLAYERS = 4;
     //8hex on middle
-    const MAX_WIDTH = 8;
-    const MIDDLEROWS = 15;
-    const SPREAD = 2;
+    // const MAX_WIDTH = 8;
+    // const MIDDLEROWS = 15;
+    // const SPREAD = 2;
 
     const colorsTest = ['olive', 'cyan', 'lightyellow', 'lightgreen']
     const biomCount = {
@@ -37,9 +37,9 @@
         [colorsTest[2]]: 0,
         [colorsTest[3]]: 0,
     };
-    // const MAX_WIDTH = 12;
-    // const MIDDLEROWS = 17;
-    // const SPREAD = 4; //more than 5 doens't generate;
+    const MAX_WIDTH = 12;
+    const MIDDLEROWS = 17;
+    const SPREAD = 4; 
 
     // @TODO get diff solution to this, a map solve it;
     let flatIndex = 0;
@@ -163,6 +163,13 @@
                 })
         }
 
+
+        flatHexes.forEach(hex => {
+            const neighbors = getNeighborHexesV3(hex, 1, true).map(hex => rows[hex.row][hex.pos]);
+            const isBorder = neighbors.some(n => n.bgColor !== hex.bgColor);
+            hex.opacity = isBorder ? 0.7 : 1;
+        });
+
         const elementsOnMap = rows.map(createRow);
         mapElement.innerHTML = '';
         mapElement.append(...elementsOnMap);
@@ -206,9 +213,8 @@
         const distFromEdge = hex.row > (MIDDLEROWS + MAX_WIDTH - 3) ?
             hex.row - (MIDDLEROWS + MAX_WIDTH - 3) : MAX_WIDTH - hex.row
         return {
-            row: hex.row,
+            ...hex,
             rowPair: hex.row + (hex.row % 2 !== 0 ? 1 : 0),
-            pos: hex.pos,
             column: (distFromEdge > 0 ? distFromEdge - 1 : 1) + hex.pos * 2 + (distFromEdge < 1 && hex.row % 2 != 0 ? -1 : 0),
         }
     };
@@ -400,11 +406,16 @@
     //pick random hexes
 
     //multiple spreades on biom maybe better;
+
+
     generateView(false);
 
+    //borda dox bioma
     reGen.addEventListener('click', generateView);
 
     //need to prevent infinite loops
+
+    //borda do bioma é onde os 6 vizinhos não são do mesmo bioma;
 
 </script>
 
