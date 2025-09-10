@@ -93,7 +93,7 @@
         Array(NUM_PLAYERS).fill(true).forEach(_ => {
             const borders = getNeighborHexesV3({ row: 14, pos: 3 }, 7, true);
             let randomNumber = getRandomInt(flatHexes.length);
-            let neighbors = getSpreadV3(flatHexes[randomNumber], SPREAD + 3)
+            let neighbors = getSpreadV3(flatHexes[randomNumber], SPREAD + 1)
             let neighborsIndex = neighbors.map(n => n.flatIndex);
             //avoiding borders on startgin bioms
             const borderFlatIndex = borders.map(border => {
@@ -101,9 +101,11 @@
                 return rows[border.row][border.pos].flatIndex;
             });
 
-            while (borderFlatIndex.includes(randomNumber) || randomHex.includes(randomNumber) || neighborsIndex.some(i => randomHex.includes(i))) {
+            while (borderFlatIndex.includes(randomNumber) ||
+                randomHex.includes(randomNumber) ||
+                neighborsIndex.some(i => randomHex.includes(i))) {
                 randomNumber = getRandomInt(flatHexes.length)
-                neighbors = getSpreadV3(flatHexes[randomNumber], SPREAD + 3)
+                neighbors = getSpreadV3(flatHexes[randomNumber], SPREAD + 1)
                 neighborsIndex = neighbors.map(n => n.flatIndex);
             }
             randomHex.push(randomNumber);
@@ -401,6 +403,8 @@
     generateView(false);
 
     reGen.addEventListener('click', generateView);
+
+    //need to prevent infinite loops
 
 </script>
 
