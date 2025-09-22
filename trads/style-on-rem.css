@@ -4,6 +4,9 @@
     src: url('./impact.ttf');
 }
 
+:root {
+    font-size: 16px;   
+}
 /* The most common card size for board games is 2.5 x 3.5 inches (63.5 x 88.9 mm).  */
 
 body {
@@ -416,3 +419,4 @@ img[src="sylvia-art.png"] {
    object-position: 2rem 3rem;
 
 }
+
