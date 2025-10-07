@@ -1,5 +1,6 @@
 :root {
     font-size: 16px;
+    --ui-bg: #eee;
 }
 
 body {
@@ -7,19 +8,24 @@ body {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    background-color: black;
+    /* background-color: black; */
 }
 
 .map {
-    /* --hex-size: 8.2vmin; */
-    --hex-size: calc(100vmin / 22);
-    /* --hex-size: 34px; */
+    --hex-size: 2.5rem;
     box-sizing: border-box;
     margin: 0px;
+    margin-left: auto;
+    margin-right: auto;
     --margin: 2px;
-    --pad: 20px;
+    --pad: 15px;
     padding: calc(var(--pad) * 1.5) calc(var(--pad)/cos(30deg));
     background-color: black;
+    clip-path: polygon(-50% 50%,
+            50% 100%,
+            150% 50%,
+            50% 0);
+    aspect-ratio: cos(30deg);
 }
 
 .row {
@@ -28,42 +34,28 @@ body {
     justify-content: center;
     align-items: center;
     /* gap of 1 hexagon, that fits row above */
-    gap: calc(var(--hex-size)/2 + var(--margin)*2);
+    gap: calc((var(--hex-size)/ cos(30deg))/2 + var(--margin)*2);
 }
 
 .row:not(:first-child) {
-    /* margin-top: -18%; */
-    margin-top: calc((var(--hex-size)/ cos(30deg)) / -2 + var(--margin));
-}
-
-/* fix browser inperfections for 100px, need to change for more precision */
-.row:nth-child(2) {
-    margin-top: calc((var(--hex-size)/ cos(30deg)) / -2 + var(--margin) - 0.1px);
+    margin-top: calc(var(--hex-size) / -2 + var(--margin));
 }
 
 .hex {
     /* uncoment for debug */
     color: transparent;
+    font-size: 1px;
+    box-sizing: border-box;
     text-align: center;
-    width: var(--hex-size);
-    height: calc(var(--hex-size)/cos(30deg));
+    height: var(--hex-size);
     background: darkgrey;
-    /* filter: drop-shadow(1px 1px red); */
     transform-origin: center;
     flex-shrink: 0;
-
-    /* Ponty side up */
-    clip-path: polygon(-50% 50%,
-            50% 100%,
-            150% 50%,
-            50% 0);
-
-    /* inverted x and y */
     clip-path: polygon(50% -50%, 100% 50%, 50% 150%, 0% 50%);
-
     background-size: 80%;
     background-repeat: no-repeat;
     background-position: 50% 35%;
+    aspect-ratio: 1/cos(30deg);
 }
 
 .hex::before {
@@ -75,9 +67,10 @@ body {
     visibility: visible;
 }
 
+.legend,
 .controls {
     visibility: hidden;
-    background: white;
+    background: var(--ui-bg);
     border-radius: 4px;
     font-family: monospace;
     position: fixed;
@@ -88,6 +81,16 @@ body {
     display: flex;
     flex-direction: column;
     gap: .5em;
+    box-shadow: 5px 8px 5px rgba(0,0,0,.2);
+    border: 1px solid gray;
+}
+
+.legend {
+    visibility: visible;
+    left: unset;
+    top: unset;
+    right: 20px;
+    bottom: 20px;
 }
 
 .bioms-wrapper {
@@ -111,6 +114,7 @@ body {
     display: contents;
 }
 
+.legend>label,
 .controls>label {
     font-weight: bold;
 }
@@ -127,9 +131,38 @@ body {
     width: 3rem;
     height: 3rem;
     padding: 0;
+    border: 0;
+    border-radius: 4px;
 }
 
 #open-config img {
-    width: 2rem;
+    width: 100%;
+    box-sizing: border-box;
     aspect-ratio: 1;
+    padding: 5px;
+    object-position: center;
+}
+
+.biom-legend {
+    display: flex;
+    background-color: black;
+    align-items: center;
+}
+
+.biom-legend div {
+    width: 100%;
+    height: 20px;
+    background: var(--ui-bg);
+}
+
+.biom-legend div:not(:first-child) {
+    width: 60px;
+    border: 3px solid white;
+    box-sizing: border-box;
+}
+
+
+button {
+    background: white;
+    border: 1px solid gray;
 }
