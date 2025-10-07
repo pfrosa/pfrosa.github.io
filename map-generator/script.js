@@ -51,8 +51,9 @@ const BIOMS = [
 
     },
     {
-        name: "Costeiro", //(Praia/Costa),
-        backgroundColor: 'lightyellow'
+        name: "Costeiro", //(Praia/Costa), 
+        backgroundColor: 'aqua',
+        borderBackgroundColor: 'palegoldenrod'
 
     },
     {
@@ -151,8 +152,9 @@ savePng.addEventListener('click', () => {
 
 
 });
-//Gerar legenda
-//@TODO COLAPSEBLE
+
+//@TODO COLAPSABLE
+
 legendElement.append(...BIOMS.map(biome => {
     const biomElement = document.createElement('div');
     const biomName = document.createElement('div');
@@ -164,8 +166,8 @@ legendElement.append(...BIOMS.map(biome => {
     //biomeElement.style.backgroundColor = biome.backgroundColor;
     biomName.innerText = biome.name;
     biomColor.style.backgroundColor = biome.backgroundColor;
-    biomBorderColor.style.backgroundColor = biome.backgroundColor;
-    biomBorderColor.style.opacity = '0.7';
+    biomBorderColor.style.backgroundColor = biome.borderBackgroundColor || biome.backgroundColor;
+    biomBorderColor.style.opacity =  biome.borderBackgroundColor ? '1' : '0.7';
     biomElement.append(biomName, biomColor, biomBorderColor);
     return biomElement;
 }));
@@ -183,14 +185,14 @@ const createHexObject = (row, pos) => ({
 
 const createHex = (content = {}) => {
     const hexElement = document.createElement('div');
-    hexElement.style.backgroundColor = BIOMS[content.biomIndex]?.backgroundColor || `RED`;
+    hexElement.style.backgroundColor = content.bgColor || BIOMS[content.biomIndex]?.backgroundColor || `RED`;
     hexElement.style.opacity = content.opacity;
     hexElement.dataset.dist = content.dist || 0;
 
     hexElement.innerText = content.text;
     // hexElement.style.backgroundImage = content.showImage ? BIOMS[content.biomIndex].backgroundImage || 'none' : 'none';
     hexElement.classList.add('hex');
-    hexElement.addEventListener('click', () => hexElement.style.backgroundColor = 'red');
+    // hexElement.addEventListener('click', () => hexElement.style.backgroundColor = 'red');
     content.htmlElement = hexElement;
     return hexElement;
 }
@@ -226,8 +228,6 @@ const generateView = (showNormalized = false) => {
         selectedBioms.push(shuffledBioms.find(b => !selectedBioms.includes(b)));
     };
     const selectedBiomsIndex = selectedBioms.map(b => BIOMS.indexOf(b));
-    console.table(selectedBioms);
-    console.log(selectedBiomsIndex)
 
     const biomCountProxyHandler = {
         get(target, p) {
@@ -263,17 +263,18 @@ const generateView = (showNormalized = false) => {
     //get bioms and implement praia on lugar certo
 
     Array(CONFIG.NUM_PLAYERS).fill(true).forEach((_, i) => {
+        const isCoast = BIOMS[selectedBiomsIndex[i]]?.borderBackgroundColor !== undefined;
         const mapEdges = getNeighborHexesV3({ row: CONFIG.MIDDLEROWS - 1, pos: (CONFIG.MAX_WIDTH - 2) / 2 }, CONFIG.MAX_WIDTH - 1, true);
         let randomNumber = getRandomInt(STATE.flatHexes.length);
         let neighbors = getSpreadV3(STATE.flatHexes[randomNumber], CONFIG.SPREAD + 1)
         let neighborsIndex = neighbors.map(n => n.flatIndex);
         //avoiding borders on startgin bioms
         const borderFlatIndex = mapEdges.map(border => {
-            // rows[border.row][border.pos].bgColor ="orange"
+            // STATE.rows[border.row][border.pos].bgColor ="orange"
             return STATE.rows[border.row][border.pos].flatIndex;
         });
 
-        while (borderFlatIndex.includes(randomNumber) ||
+        while ((!isCoast && borderFlatIndex.includes(randomNumber)) || (isCoast && !borderFlatIndex.includes(randomNumber)) ||
             randomHex.includes(randomNumber) ||
             neighborsIndex.some(i => randomHex.includes(i))) {
             randomNumber = getRandomInt(STATE.flatHexes.length)
@@ -283,10 +284,6 @@ const generateView = (showNormalized = false) => {
         randomHex.push(randomNumber);
     })
 
-    // console.log(randomHex);
-    //i here should be biom
-
-    //PAINT RANDOM HEX and spread
     randomHex.forEach((hexPos, i) => {
         const hex = STATE.flatHexes[hexPos];
         spread(hex, i, true);
@@ -334,9 +331,13 @@ const generateView = (showNormalized = false) => {
 
 
     STATE.flatHexes.forEach(hex => {
+        const isCoast = BIOMS[hex.biomIndex]?.borderBackgroundColor !== undefined;
         const neighbors = getNeighborHexesV3(hex, 1, true).map(hex => STATE.rows[hex.row][hex.pos]);
-        const isBorder = neighbors.some(n => n.biomIndex !== hex.biomIndex);
-        hex.opacity = isBorder ? 0.7 : 1;
+        const isBorderF = (neighbors) => neighbors.some(n => n.biomIndex !== hex.biomIndex);
+        const isBorder = isBorderF(neighbors);
+        const isDoubleBorder = neighbors.some(n => isBorderF(getNeighborHexesV3(n, 1, true).map(hex => STATE.rows[hex.row][hex.pos])));
+        hex.opacity = isBorder && !isCoast? 0.7 : 1;
+        hex.bgColor = isCoast && (isBorder || isDoubleBorder) ? BIOMS[hex.biomIndex].borderBackgroundColor : BIOMS[hex.biomIndex].backgroundColor;
         hex.showImage = isBorder ? false : true;
     });
 
