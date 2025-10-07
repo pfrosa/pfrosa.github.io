@@ -11,65 +11,178 @@
 </head>
 
 <body>
-    <button id="regen"> re-generate </button>
+    <button id="open-config">
+        <a href="#config"><img src="./cog-wheel.png"></a>
+    </button>
+    <section class="controls" id="config">
+        <label for="n-players">Num. de Jogadores:</label>
+        <select name="n-players" id="n-players">
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4" selected>4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+        </select>
+        <label for="n-players">Biomas:</label>
+        <div class="bioms-wrapper">
+            <div class="biom">
+                <label for="">Tundra</label>
+                <input type="checkbox" name="" id="" value="Tundra">
+            </div>
+            <div class="biom">
+                <label for="">Savana</label>
+                <input type="checkbox" name="" id="" value="Savana">
+            </div>
+            <div class="biom">
+                <label for="">Costeiro (Praia/Costa)</label>
+                <input type="checkbox" name="" id="" value="Costeiro">
+            </div>
+            <div class="biom">
+                <label for="">Urbano/Rural</label>
+                <input type="checkbox" name="" id="" value="Urbano">
+            </div>
+            <div class="biom">
+                <label for="">Floresta</label>
+                <input type="checkbox" name="" id="" value="Floresta">
+            </div>
+            <div class="biom">
+                <label for="">Montanhoso</label>
+                <input type="checkbox" name="" id="" value="Montanhoso">
+            </div>
+            <div class="biom">
+                <label for="">Desértico</label>
+                <input type="checkbox" name="" id="" value="Desértico">
+            </div>
+            <div class="biom">
+                <label for="">Campos</label>
+                <input type="checkbox" name="" id="" value="Campos">
+            </div>
+        </div>
+        <label for="map-size">Tamanho do Mapa:</label>
+        <select name="map-size" id="map-size">
+            <option value="small">Pequeno</option>
+            <option value="medium" selected>Médio</option>
+            <option value="big" >Grande</option>
+        </select>
+        <button id="regen"> re-generate </button>
+        <a href="#map">
+            <button> close </button>
+        </a>
+    </section>
     <main class="map">
 
     </main>
 </body>
 
 <script>
+    //@TODO:
+    //fix colors on bioms, add player count to mather, add selected bioms to matter
+    //get special biom rule for coast and beaches
+    const _MAP_SIZES = {
+        big: {
+            MAX_WIDTH: 12,
+            MIDDLEROWS: 23,
+            SPREAD: 4,
+        },
+        medium: {
+            MAX_WIDTH: 10,
+            MIDDLEROWS: 19, 
+            SPREAD: 3,
+        },
+        small: {
+            MAX_WIDTH: 8,
+            MIDDLEROWS: 15,
+            SPREAD: 2,
+        }
+    }
+
+
+    //default to big map size
+    const CONFIG = {
+        NUM_PLAYERS: 4,
+        MAX_WIDTH: 12,
+        MIDDLEROWS: 17,
+        SPREAD: 4,
+    };
+
+    const STATE = {
+        rows: [],
+        flatHexes: [],
+        flatIndex: 0
+    };
+    // agua eh na borda de alguns biomas especificos, praia e costeiro so
+    const BIOMS = [
+        {
+            name: 'montain',
+            backgroundColor: 'lightGray',
+            backgroundImage: 'url(montain.svg)'
+        },
+        {
+            name:"Tundra",
+            backgroundColor: 'cyan'
+            
+        },
+        {
+            name:"Savana",
+            backgroundColor: 'lightyellow'
+            
+        },
+        {
+            name:"Costeiro (Praia/Costa)",
+            backgroundColor: 'red'
+            
+        },
+        {
+            name:"Urbano/Rural",
+            backgroundColor: 'gray'
+            
+        },
+        {
+            name:"Floresta (Densa/ Aberta/ Montanhosa/ Temperada/ Tropical)",
+            backgroundColor: 'olive'
+            
+        },
+        {
+            name:"Desértico",
+            backgroundColor: 'pink'
+            
+        },
+        {
+            name:"Campos",
+            backgroundColor: 'green'
+            
+        },
+
+    ];
+
     const SEED = Math.random();
     Math.seedrandom(SEED);
     // Math.seedrandom(0.41342047817838035);
     const mapElement = document.body.querySelector('.map');
     const reGen = document.body.querySelector('#regen');
-
-    const NUM_PLAYERS = 4;
-    //8hex on middle
-    // const MAX_WIDTH = 8;
-    // const MIDDLEROWS = 15;
-    // const SPREAD = 2;
-
-    const colorsTest = ['olive', 'cyan', 'lightyellow', 'lightgreen']
-    const biomCount = {
-        [colorsTest[0]]: 0,
-        [colorsTest[1]]: 0,
-        [colorsTest[2]]: 0,
-        [colorsTest[3]]: 0,
-    };
-    const MAX_WIDTH = 12;
-    const MIDDLEROWS = 17;
-    const SPREAD = 4; 
+    const mapSize = document.body.querySelector('#map-size');
 
     // @TODO get diff solution to this, a map solve it;
-    let flatIndex = 0;
     const createHexObject = (row, pos) => ({
         row,
         pos,
         bgColor: false,
         opacity: 1,
-        flatIndex: flatIndex++,
+        flatIndex: STATE.flatIndex++,
         text: `${row}-${pos}`,
+        biomIndex: null,
     });
-
-    //create actual arrays to have the objects on each hex having its pos, and more info
-    const rows = [
-        ...Array(MAX_WIDTH - 1).fill(true).map((_, i) => Array(i + 1).fill(i).map(createHexObject)),
-        ...Array(MIDDLEROWS).fill(true).map((_, i) => Array(MAX_WIDTH - i % 2).fill(i + MAX_WIDTH - 1).map(createHexObject)),
-        ...Array(MAX_WIDTH - 1).fill(true).map((_, i) => Array(MAX_WIDTH - (i + 1)).fill(i + MIDDLEROWS + MAX_WIDTH - 1).map(createHexObject)),
-    ];
-
-    const flatHexes = rows.flat();
 
     const createHex = (content = {}) => {
         const hexElement = document.createElement('div');
-        hexElement.style.backgroundColor = content.bgColor;
+        hexElement.style.backgroundColor =  BIOMS[content.biomIndex].backgroundColor || content.bgColor;
         hexElement.style.opacity = content.opacity;
         hexElement.dataset.dist = content.dist || 0;
 
         hexElement.innerText = content.text;
+        hexElement.style.backgroundImage = content.showImage ? BIOMS[content.biomIndex].backgroundImage || 'none' : 'none';
         hexElement.classList.add('hex');
-        hexElement.addEventListener('click', () => hexElement.style.opacity = 1);
+        // hexElement.addEventListener('click', () => hexElement.style.opacity = 1);
         content.htmlElement = hexElement;
         return hexElement;
     }
@@ -82,80 +195,115 @@
     }
 
     const generateView = (showNormalized = false) => {
+     
+        Object.assign(CONFIG, _MAP_SIZES[mapSize.value]);
+
+        STATE.flatIndex = 0;
+
+        STATE.rows = [
+            ...Array(CONFIG.MAX_WIDTH - 1).fill(true).map((_, i) => Array(i + 1).fill(i).map(createHexObject)),
+            ...Array(CONFIG.MIDDLEROWS).fill(true).map((_, i) => Array(CONFIG.MAX_WIDTH - i % 2).fill(i + CONFIG.MAX_WIDTH - 1).map(createHexObject)),
+            ...Array(CONFIG.MAX_WIDTH - 1).fill(true).map((_, i) => Array(CONFIG.MAX_WIDTH - (i + 1)).fill(i + CONFIG.MIDDLEROWS + CONFIG.MAX_WIDTH - 1).map(createHexObject)),
+        ];
+
+        STATE.flatHexes = STATE.rows.flat();
+
+        const selectedBiomsIndex = Array(CONFIG.NUM_PLAYERS).fill(1).map((_,i) => i);
+        const biomCountProxyHandler = {
+            get(target, p) {
+                if (!target[p]) {
+                    target[p] = 0;
+                }
+                return target[p];
+            }
+        };
+        const biomCount = new Proxy({}, biomCountProxyHandler);
+
+
+
+        const spread = (hex, i, inplace = false) => {
+            const spreadDistN = getNeighborHexesV3(hex, CONFIG.SPREAD, true);
+            const randomCenterHex = spreadDistN[getRandomInt(spreadDistN.length)];
+            const spread = getSpreadV3(inplace ? hex : randomCenterHex, CONFIG.SPREAD, true);
+            spread.forEach(neighbor => {
+                biomCount[BIOMS[selectedBiomsIndex[i]].name]++;
+                if (!neighbor.bgColor) {
+                    neighbor.biomIndex = selectedBiomsIndex[i];
+                    neighbor.dist = neighbor.depth;
+                }
+            })
+            // rows.at(randomCenterHex.row)[randomCenterHex.pos].opacity = 0.3;
+        }
+
         const randomHex = [
         ];
-        biomCount[colorsTest[0]] = 0;
-        biomCount[colorsTest[1]] = 0;
-        biomCount[colorsTest[2]] = 0;
-        biomCount[colorsTest[3]] = 0;
-        flatHexes.forEach(hex => hex.bgColor = false)
 
-        Array(NUM_PLAYERS).fill(true).forEach(_ => {
-            const borders = getNeighborHexesV3({ row: 14, pos: 3 }, 7, true);
-            let randomNumber = getRandomInt(flatHexes.length);
-            let neighbors = getSpreadV3(flatHexes[randomNumber], SPREAD + 1)
+        STATE.flatHexes.forEach(hex => hex.bgColor = false)
+
+        Array(CONFIG.NUM_PLAYERS).fill(true).forEach(_ => {
+            const mapEdges = getNeighborHexesV3({ row: CONFIG.MIDDLEROWS-1, pos: (CONFIG.MAX_WIDTH-2 )/2}, CONFIG.MAX_WIDTH-1, true); //THI NEED TO ADAPT TO SIZE
+            let randomNumber = getRandomInt(STATE.flatHexes.length);
+            let neighbors = getSpreadV3(STATE.flatHexes[randomNumber], CONFIG.SPREAD + 1)
             let neighborsIndex = neighbors.map(n => n.flatIndex);
             //avoiding borders on startgin bioms
-            const borderFlatIndex = borders.map(border => {
+            const borderFlatIndex = mapEdges.map(border => {
                 // rows[border.row][border.pos].bgColor ="orange"
-                return rows[border.row][border.pos].flatIndex;
+                return STATE.rows[border.row][border.pos].flatIndex;
             });
 
             while (borderFlatIndex.includes(randomNumber) ||
                 randomHex.includes(randomNumber) ||
                 neighborsIndex.some(i => randomHex.includes(i))) {
-                randomNumber = getRandomInt(flatHexes.length)
-                neighbors = getSpreadV3(flatHexes[randomNumber], SPREAD + 1)
+                randomNumber = getRandomInt(STATE.flatHexes.length)
+                neighbors = getSpreadV3(STATE.flatHexes[randomNumber], CONFIG.SPREAD + 1)
                 neighborsIndex = neighbors.map(n => n.flatIndex);
             }
             randomHex.push(randomNumber);
         })
 
+        console.log(randomHex);
+        //i here should be biom
+
         //PAINT RANDOM HEX and spread
         randomHex.forEach((hexPos, i) => {
-            const hex = flatHexes[hexPos];
+            const hex = STATE.flatHexes[hexPos];
             spread(hex, i, true);
-            rows.at(hex.row)[hex.pos].bgColor = colorsTest[i];
-            // rows.at(hex.row)[hex.pos].opacity = 0.3;
-            rows.at(hex.row)[hex.pos].dist = 0;
+            STATE.rows.at(hex.row)[hex.pos].biomIndex = selectedBiomsIndex[i];
+            STATE.rows.at(hex.row)[hex.pos].dist = 0;
         })
 
         randomHex.reverse().forEach((hexPos, i) => {
-            const hex = flatHexes[hexPos];
+            const hex = STATE.flatHexes[hexPos];
             spread(hex, 3 - i);
         })
 
         randomHex.reverse().forEach((hexPos, i) => {
-            const hex = flatHexes[hexPos];
+            const hex = STATE.flatHexes[hexPos];
             spread(hex, i);
         })
 
-        while (flatHexes.some(hex => !hex.bgColor)) {
+        while (STATE.flatHexes.some(hex => hex.biomIndex == null)) {
             // break;
-            flatHexes.filter(hex => !hex.bgColor)
+            STATE.flatHexes.filter(hex => hex.biomIndex == null)
                 .forEach(hex => {
                     const neighbors = getSpreadV3(hex, 1);
-                    const colorCount = neighbors.reduce((colors, n) => {
-                        if (n.bgColor) colors[n.bgColor] += 1;
-                        return colors;
-                    }, {
-                        [colorsTest[0]]: 0,
-                        [colorsTest[1]]: 0,
-                        [colorsTest[2]]: 0,
-                        [colorsTest[3]]: 0,
-                    });
+                    const colorCount = neighbors.reduce((bioms, n) => {
+                        if (n.biomIndex) bioms[n.biomIndex] += 1;
+                        return bioms;
+                    }, new Proxy({}, biomCountProxyHandler));
                     const majority = Object.keys(colorCount)
                         .reduce((biggest, current) =>
                             biggest = colorCount[current] > (colorCount[biggest] || 0) ? current : biggest, 0);
 
                     if (majority) {
-                        hex.bgColor = majority;
+                        hex.biomIndex = Number(majority);
                     }
                 });
         }
+        console.log(STATE.flatHexes);
 
         if (showNormalized) {
-            const allNormalizedHexes = flatHexes
+            const allNormalizedHexes = STATE.flatHexes
                 .map(hex => {
                     const newHex = normalizePos(hex);
                     hex.text = `${newHex.row}-${newHex.column}`;
@@ -164,131 +312,29 @@
         }
 
 
-        flatHexes.forEach(hex => {
-            const neighbors = getNeighborHexesV3(hex, 1, true).map(hex => rows[hex.row][hex.pos]);
-            const isBorder = neighbors.some(n => n.bgColor !== hex.bgColor);
+        STATE.flatHexes.forEach(hex => {
+            const neighbors = getNeighborHexesV3(hex, 1, true).map(hex => STATE.rows[hex.row][hex.pos]);
+            const isBorder = neighbors.some(n => n.biomIndex !== hex.biomIndex);
             hex.opacity = isBorder ? 0.7 : 1;
+            hex.showImage = isBorder ? false : true;
         });
 
-        const elementsOnMap = rows.map(createRow);
+        const elementsOnMap = STATE.rows.map(createRow);
         mapElement.innerHTML = '';
         mapElement.append(...elementsOnMap);
     }
 
     const getRandomInt = (max) => Math.floor(Math.random() * max);
 
-    const getNeighborHexes = (hex = { row: 0, pos: 0 }) => {
-
-
-        const minus = (num, minus = 1) => num - minus;
-        const rowSizeIsBiggerUp = rows[hex.row]?.length > rows[minus(hex.row)]?.length;
-        const rowSizeIsBiggerDown = rows[hex.row]?.length > rows[hex.row + 1]?.length;
-        const rowDiffAbove = rows[minus(hex.row, 2)]?.length - rows[hex.row]?.length;
-        const rowAboveDiffSize = rowDiffAbove !== 0;
-        const rowDiffBelow = rows[hex.row + 2]?.length - rows[hex.row]?.length;
-        const rowBellowDiffSize = rowDiffBelow !== 0;
-        const getBeforePosUp = () => rowSizeIsBiggerUp ? minus(hex.pos) : hex.pos;
-        const getBeforePosDown = () => rowSizeIsBiggerDown ? minus(hex.pos) : hex.pos;
-
-
-        const neighborLeftUpPos = { row: minus(hex.row), pos: getBeforePosUp() }
-        const neighborUpPos = { row: minus(hex.row, 2), pos: rowAboveDiffSize ? minus(hex.pos, rowDiffAbove > 0 ? -1 : 1) : hex.pos }
-        const neighborRightUpPos = { row: minus(hex.row), pos: getBeforePosUp() + 1 }
-
-        const neighborLeftDownPos = { row: hex.row + 1, pos: getBeforePosDown() }
-        const neighborDownPos = { row: hex.row + 2, pos: rowBellowDiffSize ? minus(hex.pos, rowDiffBelow > 0 ? -1 : 1) : hex.pos }
-        const neighborRightDownPos = { row: hex.row + 1, pos: getBeforePosDown() + 1 }
-
-        return [
-            rows[neighborLeftUpPos.row]?.[neighborLeftUpPos.pos] || false,
-            rows[neighborUpPos.row]?.[neighborUpPos.pos] || false,
-            rows[neighborRightUpPos.row]?.[neighborRightUpPos.pos] || false,
-            rows[neighborLeftDownPos.row]?.[neighborLeftDownPos.pos] || false,
-            rows[neighborDownPos.row]?.[neighborDownPos.pos] || false,
-            rows[neighborRightDownPos.row]?.[neighborRightDownPos.pos] || false,
-        ].filter(_ => _)
-    }
-
     const normalizePos = hex => {
-        const distFromEdge = hex.row > (MIDDLEROWS + MAX_WIDTH - 3) ?
-            hex.row - (MIDDLEROWS + MAX_WIDTH - 3) : MAX_WIDTH - hex.row
+        const distFromEdge = hex.row > (CONFIG.MIDDLEROWS + CONFIG.MAX_WIDTH - 3) ?
+            hex.row - (CONFIG.MIDDLEROWS + CONFIG.MAX_WIDTH - 3) : CONFIG.MAX_WIDTH - hex.row
         return {
             ...hex,
             rowPair: hex.row + (hex.row % 2 !== 0 ? 1 : 0),
             column: (distFromEdge > 0 ? distFromEdge - 1 : 1) + hex.pos * 2 + (distFromEdge < 1 && hex.row % 2 != 0 ? -1 : 0),
         }
     };
-
-    const getNeighborHexesV2 = (hex = { row: 0, pos: 0 }, distance = 1) => {
-        //normalize pos?
-        //      const MAX_WIDTH = 8;
-        // const MIDDLEROWS = 15;
-
-        // -90 -2 0
-        // -30 -1 +1
-        // +30 +1 +1
-        // +90 +2 0
-        // +150 +1 -1
-        // 
-
-
-
-
-        const shouldGet = 6 * distance;
-        const angleOfEach = (Math.PI * 2) / shouldGet;
-        const angleOffset = distance % 2 != 0 ? (Math.PI / 6) : 0;// 30 deg.
-
-        const distanceVectors = Array(shouldGet).fill(true).map((_, i) => {
-            const vecAngleRad = i * angleOfEach + angleOffset;
-            //Magnitude
-            const mag = 1.4;
-            const x = Number(Math.cos(vecAngleRad).toFixed(2)) * mag;
-            const y = Number(Math.sin(vecAngleRad).toFixed(2)) * mag;
-
-            const vecAngle = Math.round(Math.atan2(y, x) * (180 / Math.PI));
-            const signAngle = vecAngle < 0 ? -1 : 1;
-            //1,3,5
-            const sin = Math.sin(vecAngleRad);
-            const cos = Math.cos(vecAngleRad);
-            const cosR = Math.round(Math.cos(vecAngleRad).toFixed(2));
-            const sinR = Math.round(Math.sin(vecAngleRad));
-
-            const rowDiff = Math.abs(vecAngle) == 90 ? distance * signAngle : 0;
-            const posDiff = 0;
-
-
-            //const normalizeNumberToHalfs = num => (num - Math.trunc(num)) 
-            // Provavel que se eu printasse como uma matriz esparça eu teria menos problemas; é só escluir nos vizinhos o numero correto deles e cabou;
-            const normalizedHex = normalizePos(hex);
-            const allNormalizedHexes = flatHexes
-                .map(normalizePos)
-                .reduce((arr, hex) => {
-                    if (!arr[hex.row]?.length) {
-                        arr[hex.row] = new Array(MAX_WIDTH * 2 - 1).fill();
-                    }
-                    arr[hex.row] = arr[hex.row].with(hex.column, hex);
-                    return arr;
-                }, []);
-
-            const normalizedRow = rowDiff + normalizedHex.row + Math.round(y.toFixed(2)) * distance;
-            const normalizeColumn = normalizedHex.column + Math.round(x.toFixed(2)) * distance;
-            const actualHex = allNormalizedHexes[normalizedRow]?.[normalizeColumn];
-
-            return {
-                vecAngle,
-                x,
-                y,
-                // rowDiff,
-                sinR,
-                cosR,
-                normalizedRow,
-                normalizeColumn,
-                row: actualHex?.row || 0,
-                pos: actualHex?.pos || 0,
-            }
-        });
-        return distanceVectors.filter(_ => _);
-    }
 
     const getNeighborHexesV3 = (hex = { row: 0, pos: 0 }, distance = 1, borderOnly = false) => {
         //center is the 1 
@@ -314,11 +360,11 @@
         }
 
 
-        const allNormalizedHexes = flatHexes
+        const allNormalizedHexes = STATE.flatHexes
             .map(normalizePos)
             .reduce((arr, hex) => {
                 if (!arr[hex.row]?.length) {
-                    arr[hex.row] = new Array(MAX_WIDTH * 2 - 1).fill();
+                    arr[hex.row] = new Array(CONFIG.MAX_WIDTH * 2 -1 ).fill();
                 }
                 arr[hex.row] = arr[hex.row].with(hex.column, hex);
                 return arr;
@@ -341,37 +387,6 @@
         return hexes.flat().filter(_ => _);
     }
 
-    const getSpread = (hex, depth = 1, setDepth = false, nSet = new Set()) => {
-        if (depth == 0) return Array.from(nSet);
-        else {
-            getNeighborHexes(hex).map(hex => {
-                if (setDepth) {
-                    hex.depth = !hex.depth || depth > hex.depth ? depth : hex.depth;
-                }
-                nSet.add(hex);
-                return getSpread(hex, depth - 1, setDepth, nSet)
-            }).flat();
-            return Array.from(nSet);
-        }
-    }
-
-    const getSpreadV2 = (hex, depth = 1, setDepth = false) => {
-        return Array(depth)
-            .fill(true)
-            .map((_, i) => getNeighborHexesV2(hex, i + 1))
-            .map((ditanceObjs, i) =>
-                ditanceObjs.map(distanceObj => {
-                    const { row, pos } = distanceObj;
-                    const hex = rows[row]?.[pos];
-                    if (setDepth && hex) {
-                        hex.depth = i + 1;
-                    };
-                    return hex;
-                })
-            )
-            .flat()
-    }
-
     const getSpreadV3 = (hex, depth = 1, setDepth = false) => {
         return Array(depth)
             .fill(true)
@@ -379,7 +394,7 @@
             .map((ditanceObjs, i) =>
                 ditanceObjs.map(distanceObj => {
                     const { row, pos } = distanceObj;
-                    const hex = rows[row]?.[pos];
+                    const hex = STATE.rows[row]?.[pos];
                     if (setDepth && hex && !hex.depth) {
                         hex.depth = i + 1;
                     };
@@ -389,34 +404,10 @@
             .flat()
     }
 
-    const spread = (hex, i, inplace = false) => {
-        const spreadDistN = getNeighborHexesV3(hex, SPREAD, true);
-        const randomCenterHex = spreadDistN[getRandomInt(spreadDistN.length)];
-        const spread = getSpreadV3(inplace ? hex : randomCenterHex, SPREAD, true);
-        spread.forEach(neighbor => {
-            biomCount[colorsTest[i]]++;
-            if (!neighbor.bgColor) {
-                neighbor.bgColor = colorsTest[i];
-                // neighbor.opacity = 0.7;
-                neighbor.dist = neighbor.depth;
-            }
-        })
-        // rows.at(randomCenterHex.row)[randomCenterHex.pos].opacity = 0.3;
-    }
-    //pick random hexes
-
-    //multiple spreades on biom maybe better;
-
 
     generateView(false);
-
-    //borda dox bioma
     reGen.addEventListener('click', generateView);
-
-    //need to prevent infinite loops
-
     //borda do bioma é onde os 6 vizinhos não são do mesmo bioma;
-
 </script>
 
 </html>
