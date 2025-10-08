@@ -130,6 +130,9 @@ body {
     padding: 0;
     border: 0;
     border-radius: 4px;
+    background: var(--ui-bg);
+    box-shadow: 3px 4px 5px rgba(0, 0, 0, .2);
+    border: 1px solid gray;
 }
 
 #open-config img {
@@ -169,7 +172,7 @@ button {
 
 
 /* 
-    patterns
+    patterns https://www.magicpattern.design/tools/css-backgrounds
 */
 
 
@@ -199,7 +202,7 @@ body:not(.disabled-patterns) .checkerboard-pattern {
 
 body:not(.disabled-patterns) .lines-pattern {
     --size: 3px;
-    background-image: linear-gradient(to right, rgba(0,0,0,0.3), rgba(0,0,0,0.3) var(--size), #ffffff var(--size), #ffffff );
+    background-image: linear-gradient(to right, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3) var(--size), #ffffff var(--size), #ffffff);
     background-size: calc(var(--size)*2) 100%;
 }
 
