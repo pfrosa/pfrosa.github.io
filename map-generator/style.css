@@ -176,43 +176,43 @@ button {
 */
 
 
-body:not(.disabled-patterns) [class*="pattern"] {
+:is(body, svg):not(.disabled-patterns) [class*="pattern"] {
     background-blend-mode: darken;
 }
 
-body:not(.disabled-patterns) .wavy-pattern {
+:is(body, svg):not(.disabled-patterns) .wavy-pattern {
     background-image: repeating-radial-gradient(circle at 0 0, transparent 0, rgba(0, 0, 0, 0.3) 5px), repeating-linear-gradient(rgba(0, 0, 0, 0.1), white);
 }
 
-body:not(.disabled-patterns) .zigzag-pattern {
+:is(body, svg):not(.disabled-patterns) .zigzag-pattern {
     background-image: linear-gradient(135deg, rgba(0, 0, 0, 0.3) 25%, transparent 25%), linear-gradient(225deg, rgba(0, 0, 0, 0.3) 25%, transparent 25%), linear-gradient(45deg, rgba(0, 0, 0, 0.3) 25%, transparent 25%), linear-gradient(315deg, rgba(0, 0, 0, 0.3) 25%, #ffffff 25%);
     background-position: 5px 0, 5px 0, 0 0, 0 0;
     background-size: 10px 10px;
 }
 
-body:not(.disabled-patterns) .diagonal-lines-pattern {
+:is(body, svg):not(.disabled-patterns) .diagonal-lines-pattern {
     background-image: repeating-linear-gradient(45deg, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3) 2px, transparent 2px, transparent 6px);
 }
 
-body:not(.disabled-patterns) .checkerboard-pattern {
+:is(body, svg):not(.disabled-patterns) .checkerboard-pattern {
     background-image: repeating-linear-gradient(45deg, rgba(0, 0, 0, 0.3) 25%, transparent 25%, transparent 75%, rgba(0, 0, 0, 0.3) 75%, rgba(0, 0, 0, 0.3)), repeating-linear-gradient(45deg, rgba(0, 0, 0, 0.3) 25%, #ffffff 25%, #ffffff 75%, rgba(0, 0, 0, 0.3) 75%, rgba(0, 0, 0, 0.3));
     background-position: 0 0, 8px 8px;
     background-size: 16px 16px;
 }
 
-body:not(.disabled-patterns) .lines-pattern {
+:is(body, svg):not(.disabled-patterns) .lines-pattern {
     --size: 3px;
     background-image: linear-gradient(to right, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3) var(--size), #ffffff var(--size), #ffffff);
     background-size: calc(var(--size)*2) 100%;
 }
 
-body:not(.disabled-patterns) .triangles-pattern {
+:is(body, svg):not(.disabled-patterns) .triangles-pattern {
     background-image: linear-gradient(45deg, rgba(0, 0, 0, 0.3) 50%, #ffffff 50%);
     background-size: 8px 8px;
 }
 
 
-body:not(.disabled-patterns) .cubes-pattern {
+:is(body, svg):not(.disabled-patterns) .cubes-pattern {
     --size: 8px;
     background-image:
         linear-gradient(30deg, #333 12%, transparent 12.5%, transparent 87%, #333 87.5%, #333),
@@ -226,7 +226,7 @@ body:not(.disabled-patterns) .cubes-pattern {
 
 }
 
-body:not(.disabled-patterns) .paper-pattern {
+:is(body, svg):not(.disabled-patterns) .paper-pattern {
     --size: 0.75px;
     background-image: linear-gradient(rgba(0, 0, 0, 0.3) calc(var(--size) * 2), transparent calc(var(--size) * 2)),
         linear-gradient(90deg, rgba(0, 0, 0, 0.3) calc(var(--size) * 2), transparent calc(var(--size) * 2)),
