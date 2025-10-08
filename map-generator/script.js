@@ -113,6 +113,15 @@ marginSizeSlider.addEventListener('input', () =>{
     mapElement.style.setProperty(`--margin`, `${marginSizeSlider.value}px`)
 })
 
+hexSizeSlider.addEventListener('change', () =>{
+    mapElement.style.setProperty(`--hex-size`, `${hexSizeSlider.value}rem`)
+})
+
+marginSizeSlider.addEventListener('change', () =>{
+    mapElement.style.setProperty(`--margin`, `${marginSizeSlider.value}px`)
+})
+
+
 
 toggleHach.addEventListener('click', () => {
     document.body.classList.toggle('disabled-patterns');
@@ -461,3 +470,4 @@ const getSpreadV3 = (hex, depth = 1, setDepth = false) => {
 
 generateView(true);
 reGen.addEventListener('click', generateView);
+
