@@ -39,45 +39,54 @@ const BIOMS = [
     {
         name: 'Montanhoso',
         backgroundColor: 'lightGray',
+        pattern: 'zigzag-pattern',
     },
     {
         name: "Tundra",
-        backgroundColor: 'powderblue'
+        backgroundColor: 'powderblue',
+        pattern: 'diagonal-lines-pattern',
 
     },
     {
         name: "Savana",
-        backgroundColor: 'darkgoldenrod'
-
+        backgroundColor: 'darkgoldenrod',
+        pattern: 'checkerboard-pattern'
     },
     {
         name: "Costeiro", //(Praia/Costa), 
         backgroundColor: 'aqua',
-        borderBackgroundColor: 'palegoldenrod'
+        borderBackgroundColor: 'palegoldenrod',
+        pattern: 'wavy-pattern',
 
     },
     {
         name: "Urbano/Rural",
-        backgroundColor: 'gray'
+        backgroundColor: 'gray',
+        pattern: 'cubes-pattern',
 
     },
     {
         name: "Floresta", // (Densa/ Aberta/ Montanhosa/ Temperada/ Tropical),
         backgroundColor: 'forestgreen',
+        pattern: 'triangles-pattern',
 
     },
     {
         name: "Desértico",
-        backgroundColor: 'khaki'
+        backgroundColor: 'khaki',
+        pattern: 'paper-pattern',
 
     },
     {
         name: "Campos",
-        backgroundColor: 'lime'
+        backgroundColor: 'lime',
+        pattern : 'lines-pattern'
 
     },
 
 ];
+
+// 
 
 const SEED = Math.random();
 
@@ -90,6 +99,11 @@ const mapSize = document.body.querySelector('#map-size');
 const legendElement = document.body.querySelector('#legend');
 const biomsWrapper = document.body.querySelector('.bioms-wrapper');
 const nPlayersSelect = document.body.querySelector('#n-players');
+const toggleHach = document.body.querySelector(`#disable-patterns`);
+
+toggleHach.addEventListener('click', () => {
+    document.body.classList.toggle('disabled-patterns');
+})
 
 nPlayersSelect.addEventListener('change', (e) => {
     CONFIG.NUM_PLAYERS = Number(e.target.value);
@@ -165,6 +179,8 @@ legendElement.append(...BIOMS.map(biome => {
     biomElement.classList.add('biom-legend');
     //biomeElement.style.backgroundColor = biome.backgroundColor;
     biomName.innerText = biome.name;
+    biomColor.classList.add(biome.pattern);
+    biomBorderColor.classList.add(biome.pattern);
     biomColor.style.backgroundColor = biome.backgroundColor;
     biomBorderColor.style.backgroundColor = biome.borderBackgroundColor || biome.backgroundColor;
     biomBorderColor.style.opacity =  biome.borderBackgroundColor ? '1' : '0.7';
@@ -192,6 +208,10 @@ const createHex = (content = {}) => {
     hexElement.innerText = content.text;
     // hexElement.style.backgroundImage = content.showImage ? BIOMS[content.biomIndex].backgroundImage || 'none' : 'none';
     hexElement.classList.add('hex');
+
+    //add pattern if exists
+    hexElement.classList.add(BIOMS[content.biomIndex]?.pattern || 'none');
+
     // hexElement.addEventListener('click', () => hexElement.style.backgroundColor = 'red');
     content.htmlElement = hexElement;
     return hexElement;
@@ -319,6 +339,8 @@ const generateView = (showNormalized = false) => {
 
             });
     }
+
+    //@MAYBE searchFor loners, find any hex that is surreound by different biom and change it to the majority biom
 
     if (showNormalized) {
         STATE.flatHexes
