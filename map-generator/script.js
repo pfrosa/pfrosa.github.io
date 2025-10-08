@@ -285,16 +285,12 @@ const generateView = (showNormalized = false) => {
     Array(CONFIG.NUM_PLAYERS).fill(true).forEach((_, i) => {
         const isCoast = BIOMS[selectedBiomsIndex[i]]?.borderBackgroundColor !== undefined;
         const mapEdges = getNeighborHexesV3({ row: CONFIG.MIDDLEROWS - 1, pos: (CONFIG.MAX_WIDTH - 2) / 2 }, CONFIG.MAX_WIDTH - 1, true);
+        const borderFlatIndex = mapEdges.map(border => border.flatIndex);
         let randomNumber = getRandomInt(STATE.flatHexes.length);
         let neighbors = getSpreadV3(STATE.flatHexes[randomNumber], CONFIG.SPREAD + 1)
         let neighborsIndex = neighbors.map(n => n.flatIndex);
-        //avoiding borders on startgin bioms
-        const borderFlatIndex = mapEdges.map(border => {
-            // STATE.rows[border.row][border.pos].bgColor ="orange"
-            return STATE.rows[border.row][border.pos].flatIndex;
-        });
 
-        while ((!isCoast && borderFlatIndex.includes(randomNumber)) || (isCoast && !borderFlatIndex.includes(randomNumber)) ||
+        while ((isCoast && !borderFlatIndex.includes(randomNumber)) ||
             randomHex.includes(randomNumber) ||
             neighborsIndex.some(i => randomHex.includes(i))) {
             randomNumber = getRandomInt(STATE.flatHexes.length)
