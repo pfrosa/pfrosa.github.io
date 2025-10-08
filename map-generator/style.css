@@ -43,8 +43,10 @@ body {
 
 .hex {
     /* uncoment for debug */
+    font-size: 0px;
     color: transparent;
-    font-size: 1px;
+    font-family: monospace;
+    font-weight: bold;
     box-sizing: border-box;
     text-align: center;
     height: var(--hex-size);
@@ -53,11 +55,24 @@ body {
     flex-shrink: 0;
     clip-path: polygon(50% -50%, 100% 50%, 50% 150%, 0% 50%);
     aspect-ratio: 1/cos(30deg);
+    display: flex;
+    justify-content: center;
+    align-items: end;
+
+    
 }
 
-.hex::before {
-    content: attr(data-dist);
-    display: block;
+.map:not(.disabled-numbers) .hex::before {
+    content: attr(data-flat);
+    color: rgba(255,255,255,0.85);
+    width: 150%;
+    display: flex;
+    justify-content: center;
+    text-align: center;
+    background-color: rgba(0, 0, 0, 0.4);
+    font-size: calc(var(--hex-size) * 0.33 );
+    opacity: 1;
+
 }
 
 .controls:target {
@@ -100,11 +115,12 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    padding: 0.1em;
 }
 
 .biom input {
-    height: 1rem;
-    width: 1rem;
+    height: 1.5rem;
+    width: 1.5rem;
 }
 
 .controls a {
@@ -151,7 +167,7 @@ body {
 
 .biom-legend div {
     width: 100%;
-    height: 20px;
+    height: 30px;
     background-color: var(--ui-bg);
 }
 
@@ -162,9 +178,10 @@ body {
 }
 
 
-button {
+button,input,select {
     background: white;
     border: 1px solid gray;
+    padding: 0.5em;
     cursor: pointer;
 }
 
@@ -176,43 +193,43 @@ button {
 */
 
 
-:is(body, svg):not(.disabled-patterns) [class*="pattern"] {
+:is(.map, body):not(.disabled-patterns) [class*="pattern"] {
     background-blend-mode: darken;
 }
 
-:is(body, svg):not(.disabled-patterns) .wavy-pattern {
+:is(.map, body):not(.disabled-patterns) .wavy-pattern {
     background-image: repeating-radial-gradient(circle at 0 0, transparent 0, rgba(0, 0, 0, 0.3) 5px), repeating-linear-gradient(rgba(0, 0, 0, 0.1), white);
 }
 
-:is(body, svg):not(.disabled-patterns) .zigzag-pattern {
+:is(.map, body):not(.disabled-patterns) .zigzag-pattern {
     background-image: linear-gradient(135deg, rgba(0, 0, 0, 0.3) 25%, transparent 25%), linear-gradient(225deg, rgba(0, 0, 0, 0.3) 25%, transparent 25%), linear-gradient(45deg, rgba(0, 0, 0, 0.3) 25%, transparent 25%), linear-gradient(315deg, rgba(0, 0, 0, 0.3) 25%, #ffffff 25%);
     background-position: 5px 0, 5px 0, 0 0, 0 0;
     background-size: 10px 10px;
 }
 
-:is(body, svg):not(.disabled-patterns) .diagonal-lines-pattern {
+:is(.map, body):not(.disabled-patterns) .diagonal-lines-pattern {
     background-image: repeating-linear-gradient(45deg, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3) 2px, transparent 2px, transparent 6px);
 }
 
-:is(body, svg):not(.disabled-patterns) .checkerboard-pattern {
+:is(.map, body):not(.disabled-patterns) .checkerboard-pattern {
     background-image: repeating-linear-gradient(45deg, rgba(0, 0, 0, 0.3) 25%, transparent 25%, transparent 75%, rgba(0, 0, 0, 0.3) 75%, rgba(0, 0, 0, 0.3)), repeating-linear-gradient(45deg, rgba(0, 0, 0, 0.3) 25%, #ffffff 25%, #ffffff 75%, rgba(0, 0, 0, 0.3) 75%, rgba(0, 0, 0, 0.3));
     background-position: 0 0, 8px 8px;
     background-size: 16px 16px;
 }
 
-:is(body, svg):not(.disabled-patterns) .lines-pattern {
+:is(.map, body):not(.disabled-patterns) .lines-pattern {
     --size: 3px;
     background-image: linear-gradient(to right, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3) var(--size), #ffffff var(--size), #ffffff);
     background-size: calc(var(--size)*2) 100%;
 }
 
-:is(body, svg):not(.disabled-patterns) .triangles-pattern {
+:is(.map, body):not(.disabled-patterns) .triangles-pattern {
     background-image: linear-gradient(45deg, rgba(0, 0, 0, 0.3) 50%, #ffffff 50%);
     background-size: 8px 8px;
 }
 
 
-:is(body, svg):not(.disabled-patterns) .cubes-pattern {
+:is(.map, body):not(.disabled-patterns) .cubes-pattern {
     --size: 8px;
     background-image:
         linear-gradient(30deg, #333 12%, transparent 12.5%, transparent 87%, #333 87.5%, #333),
@@ -226,7 +243,7 @@ button {
 
 }
 
-:is(body, svg):not(.disabled-patterns) .paper-pattern {
+:is(.map, body):not(.disabled-patterns) .paper-pattern {
     --size: 0.75px;
     background-image: linear-gradient(rgba(0, 0, 0, 0.3) calc(var(--size) * 2), transparent calc(var(--size) * 2)),
         linear-gradient(90deg, rgba(0, 0, 0, 0.3) calc(var(--size) * 2), transparent calc(var(--size) * 2)),

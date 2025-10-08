@@ -79,8 +79,8 @@ const BIOMS = [
     },
     {
         name: "Campos",
-        backgroundColor: 'lime',
-        pattern : 'lines-pattern'
+        backgroundColor: 'yellowgreen',
+        pattern: 'lines-pattern'
 
     },
 
@@ -100,31 +100,29 @@ const legendElement = document.body.querySelector('#legend');
 const biomsWrapper = document.body.querySelector('.bioms-wrapper');
 const nPlayersSelect = document.body.querySelector('#n-players');
 const toggleHach = document.body.querySelector(`#disable-patterns`);
+const toggleNumber = document.body.querySelector(`#disable-numbers`);
 const hexSizeSlider = document.body.querySelector(`#hex-size`);
 const marginSizeSlider = document.body.querySelector(`#margin`);
 
 
 
-hexSizeSlider.addEventListener('input', () =>{
+hexSizeSlider.addEventListener('input', () => {
     mapElement.style.setProperty(`--hex-size`, `${hexSizeSlider.value}rem`)
 })
 
-marginSizeSlider.addEventListener('input', () =>{
+marginSizeSlider.addEventListener('input', () => {
     mapElement.style.setProperty(`--margin`, `${marginSizeSlider.value}px`)
 })
-
-hexSizeSlider.addEventListener('change', () =>{
-    mapElement.style.setProperty(`--hex-size`, `${hexSizeSlider.value}rem`)
-})
-
-marginSizeSlider.addEventListener('change', () =>{
-    mapElement.style.setProperty(`--margin`, `${marginSizeSlider.value}px`)
-})
-
 
 
 toggleHach.addEventListener('click', () => {
+    mapElement.classList.toggle('disabled-patterns');
     document.body.classList.toggle('disabled-patterns');
+
+})
+
+toggleNumber.addEventListener('click', () => {
+    mapElement.classList.toggle('disabled-numbers');
 })
 
 nPlayersSelect.addEventListener('change', (e) => {
@@ -205,7 +203,7 @@ legendElement.append(...BIOMS.map(biome => {
     biomBorderColor.classList.add(biome.pattern);
     biomColor.style.backgroundColor = biome.backgroundColor;
     biomBorderColor.style.backgroundColor = biome.borderBackgroundColor || biome.backgroundColor;
-    biomBorderColor.style.opacity =  biome.borderBackgroundColor ? '1' : '0.7';
+    biomBorderColor.style.opacity = biome.borderBackgroundColor ? '1' : '0.7';
     biomElement.append(biomName, biomColor, biomBorderColor);
     return biomElement;
 }));
@@ -217,7 +215,7 @@ const createHexObject = (row, pos) => ({
     bgColor: false,
     opacity: 1,
     flatIndex: STATE.flatIndex++,
-    text: `${row}-${pos}`,
+    text: `${STATE.flatIndex}`,
     biomIndex: null,
 });
 
@@ -226,6 +224,7 @@ const createHex = (content = {}) => {
     hexElement.style.backgroundColor = content.bgColor || BIOMS[content.biomIndex]?.backgroundColor || `RED`;
     hexElement.style.opacity = content.opacity;
     hexElement.dataset.dist = content.dist || 0;
+    hexElement.dataset.flat = content.flatIndex + 1;
 
     hexElement.innerText = content.text;
     // hexElement.style.backgroundImage = content.showImage ? BIOMS[content.biomIndex].backgroundImage || 'none' : 'none';
@@ -367,6 +366,8 @@ const generateView = (showNormalized = false) => {
                 hex.text = `${newHex.row}-${newHex.column}`;
                 return newHex;
             })
+    } else {
+
     }
 
 
@@ -376,7 +377,7 @@ const generateView = (showNormalized = false) => {
         const isBorderF = (neighbors) => neighbors.some(n => n.biomIndex !== hex.biomIndex);
         const isBorder = isBorderF(neighbors);
         const isDoubleBorder = neighbors.some(n => isBorderF(getNeighborHexesV3(n, 1, true).map(hex => STATE.rows[hex.row][hex.pos])));
-        hex.opacity = isBorder && !isCoast? 0.7 : 1;
+        hex.opacity = isBorder && !isCoast ? 0.7 : 1;
         hex.bgColor = isCoast && (isBorder || isDoubleBorder) ? BIOMS[hex.biomIndex].borderBackgroundColor : BIOMS[hex.biomIndex].backgroundColor;
         hex.showImage = isBorder ? false : true;
     });
@@ -468,6 +469,5 @@ const getSpreadV3 = (hex, depth = 1, setDepth = false) => {
 }
 
 
-generateView(true);
+generateView(false);
 reGen.addEventListener('click', generateView);
-
