@@ -101,11 +101,18 @@ const biomsWrapper = document.body.querySelector('.bioms-wrapper');
 const nPlayersSelect = document.body.querySelector('#n-players');
 const toggleHach = document.body.querySelector(`#disable-patterns`);
 const hexSizeSlider = document.body.querySelector(`#hex-size`);
+const marginSizeSlider = document.body.querySelector(`#margin`);
+
 
 
 hexSizeSlider.addEventListener('input', () =>{
     mapElement.style.setProperty(`--hex-size`, `${hexSizeSlider.value}rem`)
 })
+
+marginSizeSlider.addEventListener('input', () =>{
+    mapElement.style.setProperty(`--margin`, `${marginSizeSlider.value}px`)
+})
+
 
 toggleHach.addEventListener('click', () => {
     document.body.classList.toggle('disabled-patterns');
