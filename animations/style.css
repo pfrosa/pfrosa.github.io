@@ -116,7 +116,6 @@ section {
     background-color: hsl(60, 100%, 90%);
     z-index: 1;
     padding: 1em;
-    font-size: 1.5em;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -143,5 +142,6 @@ section {
     background-color: hsl(25, 75%, 40%);
     z-index: 1;
     clip-path: polygon(0% 0%, 20% 16%, 80% 16%, 100% 0%, 100% 100%, 0% 100%);
+
 
 }
