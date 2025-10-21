@@ -1,0 +1,177 @@
+/* Third Animation */
+
+.line {
+    position: relative;
+    color: #EEE;
+    font-family: monospace;
+    display: flex;
+    gap: 1em;
+    padding: 1em;
+    border-bottom: 1px solid #222;
+    background-color: #18181a;
+    width: 500px;
+}
+
+.avatar rect,
+.avatar ellipse {
+    fill: none;
+    stroke: hsl(84, 100%, 30%);
+    stroke-width: 0.75px;
+}
+
+.avatar ellipse {
+    fill: #18181a;
+}
+
+@property --progress {
+    syntax: "<number>";
+    inherits: false;
+    initial-value: 0;
+}
+
+#progress {
+    stroke: greenyellow;
+    stroke-opacity: 1;
+    --progress: 20;
+    stroke-dasharray: 115;
+    /* 115 == 100% */
+    stroke-dashoffset: calc(115 - (115 * var(--progress) / 100));
+    transform-origin: 16px 16px;
+    rotate: 180deg;
+    animation: progressAnim 6s ease-in-out alternate infinite;
+}
+
+.line:nth-child(2) #progress {
+    animation-delay: -2s;
+}
+
+.line:nth-child(3) #progress {
+    animation-delay: -3s;
+}
+
+
+@keyframes progressAnim {
+    0% {
+        --progress: 0;
+    }
+
+    20% {
+        --progress: 35;
+    }
+
+    40% {
+        --progress: 10;
+    }
+
+    60% {
+        --progress: 46;
+    }
+
+
+    80% {
+        --progress: 5;
+    }
+
+
+    100% {
+        --progress: 70;
+    }
+}
+
+/* Lines Pulsing Animation */
+
+.line:hover:before {
+    content: '';
+    display: block;
+    z-index: 1;
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    background-color: hsl(220, 70%, 10%);
+    mix-blend-mode: lighten;
+    animation: pulseBg 3s ease-in-out alternate infinite;
+}
+
+.line::after {
+    content: '';
+    display: block;
+    z-index: 2;
+    position: absolute;
+    top: 0;
+    left: 0%;
+    height: 100%;
+    width: 100%;
+    --pos: 0%;
+    background:
+        linear-gradient(90deg, rgba(0, 0, 0, 0) 0%, hsl(240, 58%, 35%) var(--pos), rgba(0, 0, 0, 0) 100%);
+    animation: bgPos 1.5s ease-in-out alternate infinite;
+    background-repeat: no-repeat;
+    mix-blend-mode: color-dodge;
+}
+
+
+/* Styling for the lines */
+.line .info {
+    width: 100%;
+    display: grid;
+    grid-template-areas: 
+        "user-data right-icons"
+        "middle-icons right-icons"
+        "bottom-icons right-icons";
+}
+
+.username {
+    color: #999;
+}
+
+
+.user-data {
+    grid-area: user-data;
+}
+
+.middle-icons {
+    grid-area: middle-icons;
+}
+
+.bottom-icons {
+    grid-area: bottom-icons;
+}
+
+.user-data ,
+.middle-icons,
+.bottom-icons,
+.value {
+    display: flex;
+    gap: 1em;
+    align-items: center;
+}
+
+.value {
+    gap: 0;
+    justify-content: end;
+}
+
+.right-icons {
+    justify-self: end;
+    grid-area: right-icons;
+}
+
+.line .material-symbols-outlined {
+    font-size: 1em;
+    color: #999
+}
+
+.value .label {
+    color: #999
+}
+
+
+.line .red {
+    color: red;
+}
+
+.line .green {
+    color: greenyellow;
+}
